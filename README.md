@@ -1,23 +1,21 @@
 # Owoonwan
 백엔드 개인 프로젝트 (운동 게시판 커뮤니티 사이트)
 
----
 #  오운완 커뮤니티 사이트
 
----
 
 자신만의 운동 기록을 공유하고, 게시판에 오운완 기록을 등록해서 사용자와 소통할수있고, 
 운동 모임을 개설해서, 운동할 사람을 모집할 수 있는 커뮤니티 사이트
 
 ## 프로젝트 기능 및 설계
 
----
 
 - 회원가입 기능
   - 사용자는 회원가입을 할 수 있다.
   - 닉네임과 아이디는 고유해야한다.
   - coolsms 에서 제공하는 sms API를 활용.
   - HttpSession을 사용해서, 인증번호 확인.
+  ### 회원가입 API
   > **POST**  `[/join/request]`<br>**기능 : 회원가입 요청**<br>
   > **Content** : 
   > `[{ id : 유저아이디 , password : 비밀번호 , nickname : 닉네임 , phoneNumber : 전화번호 }]`
@@ -27,6 +25,7 @@
   > **Content** :
   > `[{ verifyCode : 인증번호 }]`
   > <br>**Response** : `[{ status : 200 , description : "회원가입 완료"}]`
+
 - 로그인 기능
     - 사용자의 ID와 Password를 통해서 로그인.
     - SpringSecurity 와 JWT를 통해서, 사용자 인증을 하고, 인증 토큰을 발급한다.
@@ -103,5 +102,4 @@
 
 # ERD
 
----
 ![ER diagram](./OwoonwanERD.png)
