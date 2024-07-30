@@ -30,9 +30,9 @@ public class SmsVerificationService {
     public SmsVerificationDto verifyCode(HttpSession session, String certificationCode){
         String phoneNumber = (String)session.getAttribute("phoneNumber");
         String storedCode = phoneCodeMap.get(phoneNumber);
-        System.out.println(storedCode+":"+certificationCode);
+        //System.out.println(storedCode+":"+certificationCode);
         if(storedCode == null || !storedCode.equals(certificationCode)){
-            throw new VerifyException(ErrorCode.VERIFY_CODE_DISMATCH);
+            throw new VerifyException(ErrorCode.VERIFY_CODE_NOT_MATCH);
         }
         phoneCodeMap.remove(certificationCode);
         User user = (User)session.getAttribute("signUpRequest");

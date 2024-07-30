@@ -13,7 +13,7 @@ public class UserJoinDto {
     private String nickName;
 
     @Builder
-    public static UserJoinDto fromEntity(User user){
+    public static UserJoinDto fromEntity(User user) {
         return UserJoinDto.builder()
                 .userId(user.getUserId())
                 .nickName(user.getNickName())

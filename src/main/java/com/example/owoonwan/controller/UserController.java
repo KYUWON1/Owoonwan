@@ -20,12 +20,7 @@ public class UserController {
     private final UserService userService;
     private final SmsVerificationService smsVerificationService;
 
-    /**
-     * 회원가입
-     * 1. 사용자 아이디 및 닉네임 체크 후 인증번호 발송
-     * 2. 인증성공시 데이터베이스 저장
-     */
-    @PostMapping("/user/submit")
+    @PostMapping("/user/submit-form")
     public UserJoin.Response submitUserForm(
             HttpSession session,
            @RequestBody @Valid UserJoin.Request request

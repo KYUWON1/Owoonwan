@@ -29,10 +29,9 @@ public class UserService {
     @Transactional
     public UserJoinDto createUser(
             UserJoin.Request request
-            ,HttpSession session){
+            , HttpSession session) {
         // 아이디 닉네임 중복 체크
-        checkForDuplicateUserIdOrNickName(request.getUserId(),request.getNickName());
-        System.out.println(request.getNickName());
+        checkForDuplicateUserIdOrNickName(request.getUserId(), request.getNickName());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = User.builder()
                 .userId(request.getUserId())
@@ -41,11 +40,10 @@ public class UserService {
                 .phoneNumber(request.getPhoneNumber())
                 .status(UserStatus.ACTIVE)
                 .build();
-        session.setAttribute("signUpRequest",user);
-        session.setAttribute("phoneNumber",user.getPhoneNumber());
+        session.setAttribute("signUpRequest", user);
+        session.setAttribute("phoneNumber", user.getPhoneNumber());
         smsVerificationService.sendVerificationCode(request.getPhoneNumber());
 
-        // User 객체 생성 후 저장 및 Dto로 전환해서 전달
         return UserJoinDto.fromEntity(user);
     }
 
