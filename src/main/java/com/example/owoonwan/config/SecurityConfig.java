@@ -18,7 +18,7 @@ public class SecurityConfig{
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/submit", "/user/register",
+                        .requestMatchers("/user/submit-form", "/user/register",
                                 "/h2-console/**").permitAll()
                         .anyRequest().authenticated())
                 .headers(headers -> headers

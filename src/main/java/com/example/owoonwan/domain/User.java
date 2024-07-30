@@ -1,5 +1,6 @@
 package com.example.owoonwan.domain;
 
+import com.example.owoonwan.type.UserRole;
 import com.example.owoonwan.type.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,8 +38,13 @@ public class User {
     @NotNull
     private String phoneNumber;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @CreatedDate
     private Date createdAt;

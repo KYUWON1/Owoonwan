@@ -1,5 +1,5 @@
 ### create user
-POST http://localhost:8080/user/submit
+POST http://localhost:8080/user/submit-form
 Content-Type: application/json
 
 {

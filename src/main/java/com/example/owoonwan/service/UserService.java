@@ -4,6 +4,7 @@ import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.exception.UserException;
 import com.example.owoonwan.repository.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
+import com.example.owoonwan.type.UserRole;
 import com.example.owoonwan.type.UserStatus;
 import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.UserJoin;
@@ -38,6 +39,7 @@ public class UserService {
                 .password(encodedPassword)
                 .nickName(request.getNickName())
                 .phoneNumber(request.getPhoneNumber())
+                .role(UserRole.USER)
                 .status(UserStatus.ACTIVE)
                 .build();
         session.setAttribute("signUpRequest", user);
