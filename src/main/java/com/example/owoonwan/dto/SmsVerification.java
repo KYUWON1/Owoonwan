@@ -1,6 +1,5 @@
-package com.example.owoonwan.dto.response;
+package com.example.owoonwan.dto;
 
-import com.example.owoonwan.dto.SmsVerificationDto;
 import lombok.*;
 
 public class SmsVerification {
@@ -20,7 +19,7 @@ public class SmsVerification {
         private String description;
         private String userId;
 
-        public static Response from(SmsVerificationDto user, String description){
+        public static Response from(SmsVerificationDto user,String description){
             return Response.builder()
                     .userId(user.getUserId())
                     .description(description)

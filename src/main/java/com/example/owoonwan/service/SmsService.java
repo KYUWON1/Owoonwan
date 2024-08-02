@@ -1,7 +1,12 @@
 package com.example.owoonwan.service;
 
-
+import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.SmsVerificationDto;
+import com.example.owoonwan.exception.VerifyException;
+import com.example.owoonwan.repository.UserRepository;
+import com.example.owoonwan.type.ErrorCode;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.servlet.http.HttpSession;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 import net.nurigo.sdk.message.model.Message;
@@ -17,7 +22,7 @@ public class SmsService {
     private final String smsUrl = "https://api.coolsms.co.kr";
     private final DefaultMessageService messageService;
 
-    public SmsService() {
+    public SmsService(UserRepository userRepository) {
         Dotenv dotenv = Dotenv.load();
         this.apiKey = dotenv.get("SMS_API_KEY");
         this.apiSecret = dotenv.get("SMS_API_SECRET");
