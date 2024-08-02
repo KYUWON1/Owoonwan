@@ -34,7 +34,7 @@ public class SmsVerificationService {
         if(storedCode == null || !storedCode.equals(certificationCode)){
             throw new VerifyException(ErrorCode.VERIFY_CODE_NOT_MATCH);
         }
-        phoneCodeMap.remove(certificationCode);
+        phoneCodeMap.remove(phoneNumber);
         User user = (User)session.getAttribute("signUpRequest");
         userRepository.save(user);
         return new SmsVerificationDto(user.getUserId());

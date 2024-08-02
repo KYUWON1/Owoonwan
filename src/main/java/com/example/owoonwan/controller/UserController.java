@@ -1,8 +1,7 @@
 package com.example.owoonwan.controller;
 
-import com.example.owoonwan.dto.SmsVerification;
-import com.example.owoonwan.dto.UserJoin;
-import com.example.owoonwan.service.SmsService;
+import com.example.owoonwan.dto.response.SmsVerification;
+import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.service.SmsVerificationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
