@@ -1,5 +1,6 @@
-package com.example.owoonwan.dto;
+package com.example.owoonwan.dto.response;
 
+import com.example.owoonwan.dto.UserJoinDto;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -9,6 +10,9 @@ import java.time.LocalDateTime;
 public class UserJoin {
     @Getter
     @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class Request {
         @NotNull
         @Min(10)
@@ -34,7 +38,7 @@ public class UserJoin {
         private String description;
         private LocalDateTime createdAt;
 
-        public static Response from (UserJoinDto user,String description){
+        public static Response from (UserJoinDto user, String description){
             return Response.builder()
                     .userId(user.getUserId())
                     .nickName(user.getNickName())
