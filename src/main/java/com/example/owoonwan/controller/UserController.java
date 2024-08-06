@@ -20,7 +20,6 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
     private final SmsVerificationService smsVerificationService;
 
     @PostMapping("/user/submit-form")

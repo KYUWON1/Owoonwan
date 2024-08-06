@@ -2,6 +2,7 @@ package com.example.owoonwan.service;
 
 import com.example.owoonwan.config.SecurityConfig;
 import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.exception.UserException;
@@ -20,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,6 +107,41 @@ class UserServiceTest {
                 () -> userService.createUser(request, session));
         //then
         assertEquals(ErrorCode.NICKNAME_EXIST,exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Success getUserInfo")
+    void successGetUserInfo() {
+        //given
+        User user = User.builder()
+                .userId("testId")
+                .nickName("testNick")
+                .phoneNumber("01012341234")
+                .createdAt(Date.valueOf(LocalDate.now()))
+                .build();
+        given(userRepository.findByUserId(anyString()))
+                .willReturn(Optional.of(user));
+        //when
+        UserInfoDto result = userService.getUserInfo("testId");
+
+        //then
+        assertEquals(result.getUserId(),"testId");
+        assertEquals(result.getNickName(),"testNick");
+        assertEquals(result.getPhoneNumber(),"01012341234");
+    }
+
+    @Test
+    @DisplayName("Failure getUserInfo - 유저 발견 못함")
+    void failureGetUserInfoByUserNotFound() {
+        //given
+        given(userRepository.findByUserId(anyString()))
+                .willReturn(Optional.empty());
+        //when
+        UserException exception = assertThrows(UserException.class,
+                () -> userService.getUserInfo(anyString()));
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
     }
 
 }

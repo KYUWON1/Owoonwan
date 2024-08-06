@@ -1,12 +1,17 @@
 package com.example.owoonwan.controller;
 
 import com.example.owoonwan.config.SecurityConfig;
+import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.UserJoin;
+import com.example.owoonwan.jwt.JwtUtil;
 import com.example.owoonwan.service.SmsVerificationService;
 import com.example.owoonwan.service.UserService;
+import com.example.owoonwan.type.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +21,26 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.HttpSecurityDsl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
+@Import(JwtUtil.class)
 class UserControllerTest {
     @MockBean
     private UserService userService;
@@ -36,14 +49,23 @@ class UserControllerTest {
     private SmsVerificationService smsVerificationService;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setUp() {
+        // Authentication 객체를 생성하고 SecurityContext에 설정
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("testId", null, new ArrayList<>());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
     @Test
-    @DisplayName("Success - createUser")
-    @WithMockUser
+    @DisplayName("Success createUser")
     void successCreateUser() throws Exception {
         // Given
         UserJoin.Request request = new UserJoin.Request();
@@ -72,5 +94,57 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value("testId"))
                 .andExpect(jsonPath("$.nickName").value("testNickName"));
+    }
+
+    @Test
+    @DisplayName("Success getUserInfo")
+    void successGetUserInfo() throws Exception {
+        // Given
+        String userId = "testId";
+        String role = "user";
+        Long expiredMs = 1000L;
+
+        UserInfoDto user = UserInfoDto.builder()
+                .userId(userId)
+                .nickName("nickname")
+                .phoneNumber("01012341234")
+                .build();
+
+        String token = jwtUtil.createJwtToken(userId, role, expiredMs);
+
+        given(userService.getUserInfo(userId))
+                .willReturn(user);
+
+        // When & Then
+        mockMvc.perform(get("/user/{userId}",userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization","Bearer "+ token)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(userId))
+                .andExpect(jsonPath("$.nickName").value("nickname"));
+    }
+
+    @Test
+    @DisplayName("Failure getUserInfo - 토큰 유저 불일치")
+    void failureGetUserInfoByUnMatchUserIdAndToken() throws Exception {
+        // Given
+        String userId = "wrongId";
+        String wrongId = "1234";
+        String role = "user";
+        Long expiredMs = 1000L;
+
+        // 문자열 사용 anyString x
+        String token = jwtUtil.createJwtToken(wrongId, role, expiredMs);
+
+        // When & Then
+
+        // 문자열로 비교, enum타입으로 하면 jsonpath에러 
+        mockMvc.perform(get("/user/{userId}",userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization","Bearer "+ token)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode").value("USER_INFO_UN_MATCH"));
     }
 }

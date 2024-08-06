@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(VerifyException.class)
     public ErrorResponse handleVerifyException(VerifyException e){
-        log.error("Verify exception {} is occurred.");
+        log.error("Verify exception {} is occurred.",e.getDescription());
         return new ErrorResponse(e.getErrorCode(),e.getDescription());
     }
     // 최종 예외처리

@@ -55,7 +55,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(()-> new UserException(ErrorCode.USER_NOT_FOUND));
         return UserInfoDto.builder()
                 .userId(user.getUserId())
-                .nickname(user.getNickName())
+                .nickName(user.getNickName())
                 .phoneNumber(user.getPhoneNumber())
                 .createdAt(user.getCreatedAt())
                 .build();

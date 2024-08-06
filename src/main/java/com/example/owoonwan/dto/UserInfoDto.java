@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 public class UserInfoDto {
     private String userId;
-    private String nickname;
+    private String nickName;
     private String phoneNumber;
     private Date createdAt;
 }
