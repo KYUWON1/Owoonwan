@@ -13,6 +13,8 @@ public enum ErrorCode {
     JWT_TOKEN_EXPIRED("토큰이 만료되었습니다."),
     USER_NOT_FOUND("해당 계정은 존재하지 않습니다."),
     TOKEN_CREATE_ERROR("토큰 발급에 실패했습니다."),
-    USER_INFO_UN_MATCH("유저정보가 일치하지 않습니다.");
+    USER_INFO_UN_MATCH("유저정보가 일치하지 않습니다."),
+    PASSWORD_UN_MATCH("비밀번호가 일치하지 않습니다."),
+    PASSWORD_DOUBLE_CHECK_UN_MATCH("확인 비밀번호가 일치하지 않습니다.");
     private final String description;
 }

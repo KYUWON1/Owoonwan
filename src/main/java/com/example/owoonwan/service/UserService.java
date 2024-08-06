@@ -3,7 +3,10 @@ package com.example.owoonwan.service;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.DeleteUser;
+import com.example.owoonwan.dto.response.UpdateUserIdAndNickName;
+import com.example.owoonwan.dto.response.UpdateUserPassword;
 import com.example.owoonwan.exception.UserException;
+import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.repository.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.UserRole;
@@ -19,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 @Service
@@ -76,6 +78,32 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    @Transactional
+    public UpdateUserIdAndNickName.Response updateUserIdAndNickName(String userId, UpdateUserIdAndNickName.Request request) {
+        User user = userRepository.findByUserId(userId).orElseThrow(
+                () -> new UserException(ErrorCode.USER_NOT_FOUND));
+
+        checkForDuplicateUserIdOrNickName(request.getUserId(), request.getNickName());
+
+        user.setUserId(request.getUserId());
+        user.setNickName(request.getNickName());
+
+        return new UpdateUserIdAndNickName.Response(user.getUserId());
+    }
+
+    public UpdateUserPassword.Response updateUserPassword(String userId, UpdateUserPassword.Request request) {
+        User user = userRepository.findByUserId(userId).orElseThrow(
+                () -> new UserException(ErrorCode.USER_NOT_FOUND));
+
+        checkForUserPasswordAndDoubleCheck(user.getPassword(),request);
+        String encodedPassword =
+                passwordEncoder.encode(request.getPasswordAfter());
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        return new UpdateUserPassword.Response(user.getUserId());
+    }
+
     private void checkForDuplicateUserIdOrNickName(String userId, String nickName) {
         if (userRepository.findByUserId(userId).isPresent()) {
             throw new UserException(ErrorCode.USER_ID_EXIST);
@@ -85,6 +113,20 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    private void checkForUserPasswordAndDoubleCheck(
+            String savedPassword,
+            UpdateUserPassword.Request request
+    ){
+        if(!passwordEncoder.matches(
+                request.getPasswordBefore(),savedPassword)){
+            throw new VerifyException(ErrorCode.PASSWORD_UN_MATCH);
+        }
+        if(!request.getPasswordAfter().equals(request.getPasswordDoubleCheck())){
+            throw new VerifyException(ErrorCode.PASSWORD_DOUBLE_CHECK_UN_MATCH);
+        }
+
+    }
+
     // 스프링 시큐리티로 로그인시 사용자 조회를 할수있게 해주는 메소드
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -92,6 +134,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with ID '" + userId + "' not found"));
         return user;
     }
+
 
 
 }

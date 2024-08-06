@@ -1,11 +1,8 @@
 package com.example.owoonwan.controller;
 
-import com.example.owoonwan.dto.response.DeleteUser;
-import com.example.owoonwan.dto.response.SmsVerification;
+import com.example.owoonwan.dto.response.*;
 import com.example.owoonwan.dto.UserInfoDto;
-import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.exception.VerifyException;
-import com.example.owoonwan.jwt.JwtUtil;
 import com.example.owoonwan.service.SmsVerificationService;
 import com.example.owoonwan.type.ErrorCode;
 import jakarta.servlet.http.HttpSession;
@@ -62,4 +59,21 @@ public class UserController {
     ) {
         return userService.deleteUser(userId);
     }
+
+    @PatchMapping("/user/{userId}/info")
+    public UpdateUserIdAndNickName.Response updateUser(
+        @PathVariable String userId,
+        @RequestBody UpdateUserIdAndNickName.Request request
+    ){
+        return userService.updateUserIdAndNickName(userId,request);
+    }
+
+    @PatchMapping("/user/{userId}/password")
+    public UpdateUserPassword.Response updateUser(
+            @PathVariable String userId,
+            @RequestBody UpdateUserPassword.Request request
+    ){
+        return userService.updateUserPassword(userId,request);
+    }
+
 }
