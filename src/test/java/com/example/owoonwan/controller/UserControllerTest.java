@@ -4,6 +4,7 @@ import com.example.owoonwan.config.SecurityConfig;
 import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
+import com.example.owoonwan.dto.response.DeleteUser;
 import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.jwt.JwtUtil;
 import com.example.owoonwan.service.SmsVerificationService;
@@ -35,8 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -146,5 +146,31 @@ class UserControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.errorCode").value("USER_INFO_UN_MATCH"));
+    }
+
+    @Test
+    @DisplayName("Success deleteUser")
+    void failureDeleteUser() throws Exception {
+        // Given
+        String userId = "testId";
+        String role = "user";
+        Long expiredMs = 1000L;
+
+        DeleteUser user = DeleteUser.builder()
+                .userId(userId)
+                .build();
+
+        String token = jwtUtil.createJwtToken(userId, role, expiredMs);
+
+        given(userService.deleteUser(userId))
+                .willReturn(user);
+
+        // When & Then
+        mockMvc.perform(delete("/user/{userId}",userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization","Bearer "+ token)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(userId));
     }
 }

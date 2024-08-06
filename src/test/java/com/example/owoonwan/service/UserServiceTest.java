@@ -4,6 +4,7 @@ import com.example.owoonwan.config.SecurityConfig;
 import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
+import com.example.owoonwan.dto.response.DeleteUser;
 import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.exception.UserException;
 import com.example.owoonwan.repository.UserRepository;
@@ -142,6 +143,42 @@ class UserServiceTest {
 
         //then
         assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Success deleteUser")
+    void successDeleteUser() {
+        //given
+        User user = User.builder()
+                .userId("test")
+                .build();
+        given(userRepository.findByUserId(anyString()))
+                .willReturn(Optional.of(user));
+        doNothing().when(userRepository).delete(user);
+
+        //when
+        DeleteUser result = userService.deleteUser("testId");
+
+        //then
+        assertNotNull(result);
+        assertEquals(result.getUserId(),user.getUserId());
+        verify(userRepository,times(1)).delete(user);
+    }
+
+    @Test
+    @DisplayName("Failure deleteUser - 유저 정보 없음")
+    void failureDeleteUserByUserNotFound() {
+        //given
+        given(userRepository.findByUserId(anyString()))
+                .willReturn(Optional.empty());
+
+        //when
+        UserException exception = assertThrows(UserException.class,
+                () -> userService.deleteUser(anyString()));
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
+        verify(userRepository,times(0)).delete(any());
     }
 
 }
