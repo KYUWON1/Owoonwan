@@ -2,6 +2,7 @@ package com.example.owoonwan.service;
 
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
+import com.example.owoonwan.dto.response.DeleteUser;
 import com.example.owoonwan.exception.UserException;
 import com.example.owoonwan.repository.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -61,6 +63,19 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    @Transactional
+    public DeleteUser deleteUser(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+
+        userRepository.delete(user);
+
+        return DeleteUser.builder()
+                .userId(user.getUserId())
+                .deletedAt(LocalDate.now())
+                .build();
+    }
+
     private void checkForDuplicateUserIdOrNickName(String userId, String nickName) {
         if (userRepository.findByUserId(userId).isPresent()) {
             throw new UserException(ErrorCode.USER_ID_EXIST);
@@ -77,4 +92,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with ID '" + userId + "' not found"));
         return user;
     }
+
+
 }

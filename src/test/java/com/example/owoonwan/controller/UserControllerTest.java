@@ -139,7 +139,7 @@ class UserControllerTest {
 
         // When & Then
 
-        // 문자열로 비교, enum타입으로 하면 jsonpath에러 
+        // 문자열로 비교, enum타입으로 하면 jsonpath에러
         mockMvc.perform(get("/user/{userId}",userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization","Bearer "+ token)

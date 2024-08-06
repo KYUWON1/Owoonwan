@@ -1,5 +1,6 @@
 package com.example.owoonwan.controller;
 
+import com.example.owoonwan.dto.response.DeleteUser;
 import com.example.owoonwan.dto.response.SmsVerification;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.response.UserJoin;
@@ -52,5 +53,13 @@ public class UserController {
             throw new VerifyException(ErrorCode.USER_INFO_UN_MATCH);
         }
         return userService.getUserInfo(userId);
+    }
+
+    // deleteAt 컬럼 제거하기
+    @DeleteMapping("/user/{userId}")
+    public DeleteUser deleteUser(
+            @PathVariable String userId
+    ) {
+        return userService.deleteUser(userId);
     }
 }
