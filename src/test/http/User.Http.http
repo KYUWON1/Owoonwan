@@ -14,7 +14,7 @@ POST http://localhost:8080/user/register
 Content-Type: application/json
 
 {
-  "verifyCode": "443516"
+  "verifyCode": "595891"
 }
 
 ###  user login
@@ -25,3 +25,7 @@ Content-Type: application/json
   "userId": "test12",
   "password": "content"
 }
+
+### user info
+GET http://localhost:8080/user/test12
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMjkyMjc2MiwiZXhwIjoxNzIyOTU4NzYyfQ.EW4GsfyEfKK9hQpgqw8i0kPFEUT_DFntLIi0QDeT_q8

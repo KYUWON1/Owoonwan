@@ -1,5 +1,6 @@
 package com.example.owoonwan.service;
 
+import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.exception.UserException;
 import com.example.owoonwan.repository.UserRepository;
@@ -15,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -44,6 +47,18 @@ public class UserService implements UserDetailsService {
         smsVerificationService.sendVerificationCode(request.getPhoneNumber());
 
         return UserJoinDto.fromEntity(user);
+    }
+
+    @Transactional
+    public UserInfoDto getUserInfo(String userId){
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(()-> new UserException(ErrorCode.USER_NOT_FOUND));
+        return UserInfoDto.builder()
+                .userId(user.getUserId())
+                .nickname(user.getNickName())
+                .phoneNumber(user.getPhoneNumber())
+                .createdAt(user.getCreatedAt())
+                .build();
     }
 
     private void checkForDuplicateUserIdOrNickName(String userId, String nickName) {
