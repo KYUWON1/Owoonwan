@@ -88,7 +88,8 @@ public class UserService implements UserDetailsService {
         user.setUserId(request.getUserId());
         user.setNickName(request.getNickName());
 
-        return new UpdateUserIdAndNickName.Response(user.getUserId());
+        return new UpdateUserIdAndNickName.Response(user.getUserId(),
+                user.getNickName());
     }
 
     public UpdateUserPassword.Response updateUserPassword(String userId, UpdateUserPassword.Request request) {

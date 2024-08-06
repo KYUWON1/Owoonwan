@@ -5,6 +5,8 @@ import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.DeleteUser;
+import com.example.owoonwan.dto.response.UpdateUserIdAndNickName;
+import com.example.owoonwan.dto.response.UpdateUserPassword;
 import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.jwt.JwtUtil;
 import com.example.owoonwan.service.SmsVerificationService;
@@ -168,6 +170,83 @@ class UserControllerTest {
         // When & Then
         mockMvc.perform(delete("/user/{userId}",userId)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization","Bearer "+ token)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(userId));
+    }
+
+    @Test
+    @DisplayName("Success updateUserInfo")
+    void successUpdateUserInfo() throws Exception {
+        // Given
+        String userId = "testId";
+        String afterUserId = "afterI";
+        String afterNickName = "afterN";
+        String role = "user";
+        Long expiredMs = 1000L;
+
+        UpdateUserIdAndNickName.Request request = UpdateUserIdAndNickName.Request
+                .builder()
+                .userId("test")
+                .nickName("test")
+                .build();
+        UpdateUserIdAndNickName.Response response = UpdateUserIdAndNickName.Response
+                .builder()
+                .userId(afterUserId)
+                .nickName(afterNickName)
+                .build();
+
+        String token = jwtUtil.createJwtToken(userId, role, expiredMs);
+
+        given(userService.updateUserIdAndNickName(anyString(),
+                any(UpdateUserIdAndNickName.Request.class)))
+                .willReturn(response);
+
+        // When & Then
+        mockMvc.perform(patch("/user/{userId}/info",userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .header("Authorization","Bearer "+ token)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(afterUserId))
+                .andExpect(jsonPath("$.nickName").value(afterNickName));
+    }
+
+    @Test
+    @DisplayName("Success updateUserPassword")
+    void successUpdateUserPassword() throws Exception {
+        // Given
+        String userId = "testId";
+        String passwordBefore = "1234";
+        String passwordAfter = "5678";
+        String passwordDoubleCheck = "5678";
+        String role = "user";
+        Long expiredMs = 1000L;
+
+        UpdateUserPassword.Request request = UpdateUserPassword.Request
+                .builder()
+                .passwordBefore(passwordBefore)
+                .passwordAfter(passwordAfter)
+                .passwordDoubleCheck(passwordDoubleCheck)
+                .build();
+        UpdateUserPassword.Response response =
+                UpdateUserPassword.Response
+                .builder()
+                .userId(userId)
+                .build();
+
+        String token = jwtUtil.createJwtToken(userId, role, expiredMs);
+
+        given(userService.updateUserPassword(anyString(),
+                any(UpdateUserPassword.Request.class)))
+                .willReturn(response);
+
+        // When & Then
+        mockMvc.perform(patch("/user/{userId}/password",userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
                         .header("Authorization","Bearer "+ token)
                         .with(csrf()))
                 .andExpect(status().isOk())

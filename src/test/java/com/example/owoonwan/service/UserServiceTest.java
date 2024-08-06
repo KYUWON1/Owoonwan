@@ -5,8 +5,11 @@ import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.DeleteUser;
+import com.example.owoonwan.dto.response.UpdateUserIdAndNickName;
+import com.example.owoonwan.dto.response.UpdateUserPassword;
 import com.example.owoonwan.dto.response.UserJoin;
 import com.example.owoonwan.exception.UserException;
+import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.repository.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -181,4 +184,266 @@ class UserServiceTest {
         verify(userRepository,times(0)).delete(any());
     }
 
+    @Test
+    @DisplayName("Success updateUserIdAndNickName")
+    void successUpdateUserIdAndNickName() {
+        //given
+        String userId = "test";
+        String nickName = "nickName";
+        String userIdAfter = "afterId";
+        String nickNameAfter = "afterNick";
+        User user = User.builder()
+                .userId(userId)
+                .nickName(nickName)
+                .build();
+        UpdateUserIdAndNickName.Request request =
+                UpdateUserIdAndNickName.Request.builder()
+                        .userId(userIdAfter)
+                        .nickName(nickNameAfter)
+                        .build();
+
+        given(userRepository.findByUserId("test"))
+                .willReturn(Optional.of(user));
+        given(userRepository.findByUserId(userIdAfter))
+                .willReturn(Optional.empty());
+        given(userRepository.findByNickName(nickNameAfter))
+                .willReturn(Optional.empty());
+
+        //when
+        UpdateUserIdAndNickName.Response response =
+                userService.updateUserIdAndNickName(userId, request);
+
+        //then
+        assertEquals(response.getUserId(),userIdAfter);
+        assertEquals(response.getNickName(),nickNameAfter);
+    }
+
+    @Test
+    @DisplayName("Failure updateUserIdAndNickName - 해당 유저 없음")
+    void failureUpdateUserIdAndNickNameByUserNotFound() {
+        //given
+        String userId = "test";
+        UpdateUserIdAndNickName.Request request =
+                UpdateUserIdAndNickName.Request.builder()
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.empty());
+
+        //when
+        UserException exception = assertThrows(UserException.class,
+                () -> userService.updateUserIdAndNickName(userId, request));
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Failure updateUserIdAndNickName - 아이디 중복")
+    void failureUpdateUserIdAndNickNameByIdDup() {
+        //given
+        String userId = "test";
+        String userIdAfter = "after";
+        String nickNameAfter = "after";
+        User user = User.builder()
+                .userId(userId)
+                .build();
+        UpdateUserIdAndNickName.Request request =
+                UpdateUserIdAndNickName.Request.builder()
+                        .userId(userIdAfter)
+                        .nickName(nickNameAfter)
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.of(user));
+        given(userRepository.findByUserId(userIdAfter))
+                .willReturn(Optional.of(user));
+        //when
+        UserException exception = assertThrows(UserException.class,
+                () -> userService.updateUserIdAndNickName(userId, request));
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.USER_ID_EXIST);
+    }
+
+    @Test
+    @DisplayName("Failure updateUserIdAndNickName - 닉네임 중복")
+    void failureUpdateUserIdAndNickNameByNickDup() {
+        //given
+        String userId = "test";
+        String userIdAfter = "after";
+        String nickNameAfter = "after";
+        User user = User.builder()
+                .userId(userId)
+                .build();
+        UpdateUserIdAndNickName.Request request =
+                UpdateUserIdAndNickName.Request.builder()
+                        .userId(userIdAfter)
+                        .nickName(nickNameAfter)
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.of(user));
+        given(userRepository.findByUserId(userIdAfter))
+                .willReturn(Optional.empty());
+        given(userRepository.findByNickName(nickNameAfter))
+                .willReturn(Optional.of(user));
+        //when
+        UserException exception = assertThrows(UserException.class,
+                () -> userService.updateUserIdAndNickName(userId, request));
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.NICKNAME_EXIST);
+    }
+
+    @Test
+    @DisplayName("Success updateUserPassword")
+    void successUpdateUserPassword() {
+        //given
+        String userId = "test";
+        String passwordBefore = "1234";
+        String passwordAfter = "5678";
+        String passwordDoubleCheck = "5678";
+
+        String encodedPassword = passwordEncoder.encode(passwordBefore);
+
+        User user = User.builder()
+                .userId(userId)
+                .password(encodedPassword)
+                .build();
+
+        UpdateUserPassword.Request request =
+                UpdateUserPassword.Request.builder()
+                        .passwordBefore(passwordBefore)
+                        .passwordAfter(passwordAfter)
+                        .passwordDoubleCheck(passwordDoubleCheck)
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.of(user));
+        given(passwordEncoder.matches(passwordBefore, user.getPassword()))
+                .willReturn(true);
+
+        //when
+        UpdateUserPassword.Response response =
+                userService.updateUserPassword(userId, request);
+
+
+        //then
+        assertEquals(response.getUserId(),userId);
+        verify(userRepository,times(1)).save(user);
+    }
+
+    @Test
+    @DisplayName("Failure updateUserPassword - 해당 유저 없음")
+    void failureUpdateUserPasswordByUserNotFound() {
+        //given
+        String userId = "test";
+        String passwordBefore = "1234";
+        String passwordAfter = "5678";
+        String passwordDoubleCheck = "5678";
+
+        User user = User.builder()
+                .userId(userId)
+                .password(passwordBefore)
+                .build();
+
+        UpdateUserPassword.Request request =
+                UpdateUserPassword.Request.builder()
+                        .passwordBefore(passwordBefore)
+                        .passwordAfter(passwordAfter)
+                        .passwordDoubleCheck(passwordDoubleCheck)
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.empty());
+
+        //when
+        UserException exception = assertThrows(UserException.class,
+                () -> userService.updateUserPassword(userId, request));
+
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.USER_NOT_FOUND);
+        verify(userRepository,times(0)).save(user);
+    }
+
+    @Test
+    @DisplayName("Failure updateUserPassword - 비밀번호 불일치")
+    void failureUpdateUserPasswordByPasswordUnMatch() {
+        //given
+        String userId = "test";
+        String wrongPassword = "wrong";
+        String passwordBefore = "1234";
+        String passwordAfter = "5678";
+        String passwordDoubleCheck = "5678";
+
+        String encodedPassword = passwordEncoder.encode(passwordBefore);
+
+        User user = User.builder()
+                .userId(userId)
+                .password(encodedPassword)
+                .build();
+
+        UpdateUserPassword.Request request =
+                UpdateUserPassword.Request.builder()
+                        .passwordBefore(wrongPassword)
+                        .passwordAfter(passwordAfter)
+                        .passwordDoubleCheck(passwordDoubleCheck)
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.of(user));
+
+        given(passwordEncoder.matches(wrongPassword, user.getPassword()))
+                .willReturn(false);
+
+        //when
+        VerifyException exception = assertThrows(VerifyException.class,
+                () -> userService.updateUserPassword(userId, request));
+
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.PASSWORD_UN_MATCH);
+        verify(userRepository,times(0)).save(user);
+    }
+
+    @Test
+    @DisplayName("Failure updateUserPassword - 확인 비밀번호 불일치")
+    void failureUpdateUserPasswordByPasswordDoubleCheckUnMatch() {
+        //given
+        String userId = "test";
+        String passwordBefore = "1234";
+        String passwordAfter = "5678";
+        String passwordDoubleCheckWrong = "wrong";
+
+        String encodedPassword = passwordEncoder.encode(passwordBefore);
+
+        User user = User.builder()
+                .userId(userId)
+                .password(encodedPassword)
+                .build();
+
+        UpdateUserPassword.Request request =
+                UpdateUserPassword.Request.builder()
+                        .passwordBefore(passwordBefore)
+                        .passwordAfter(passwordAfter)
+                        .passwordDoubleCheck(passwordDoubleCheckWrong)
+                        .build();
+
+        given(userRepository.findByUserId(userId))
+                .willReturn(Optional.of(user));
+
+        given(passwordEncoder.matches(passwordBefore, user.getPassword()))
+                .willReturn(true);
+
+        //when
+        VerifyException exception = assertThrows(VerifyException.class,
+                () -> userService.updateUserPassword(userId, request));
+
+
+        //then
+        assertEquals(exception.getErrorCode(),ErrorCode.PASSWORD_DOUBLE_CHECK_UN_MATCH);
+        verify(userRepository,times(0)).save(user);
+    }
 }
