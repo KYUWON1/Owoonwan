@@ -52,7 +52,7 @@ public class LoginController {
 //            );
 //        }
 //    }
-    
+
     @GetMapping("/user/me")
     public ResponseEntity<?> getUserDetails(Authentication authentication) {
         try {
