@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,31 +24,48 @@ public class LoginController {
     private final JwtUtil jwtUtil;
     private final Long expiredMs = 10 * 60 * 60 * 1000L;
 
-    // 에러 객체를 전달해야 에러가 발생하지않음
-    @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestBody UserLogin.Request request
-    ) {
-        try{
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUserId(),request.getPassword())
-            );
-
-            User customUserDetails =
-                    (User) authentication.getPrincipal();
+//    // 에러 객체를 전달해야 에러가 발생하지않음
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(
+//            @RequestBody UserLogin.Request request
+//    ) {
+//        try{
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(request.getUserId(),request.getPassword())
+//            );
+//
+//            User customUserDetails =
+//                    (User) authentication.getPrincipal();
+//            String userId = customUserDetails.getUsername();
+//            String role =
+//                    customUserDetails.getAuthorities().iterator().next().getAuthority();
+//            String token = jwtUtil.createJwtToken(userId,role,expiredMs);
+//
+//            return ResponseEntity.ok(UserLogin.Response.builder()
+//                    .userId(userId)
+//                    .token(token)
+//                    .description("토큰이 성공적으로 발급되었습니다.")
+//                    .build());
+//        }catch (AuthenticationException e){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+//                    new ErrorResponse(ErrorCode.TOKEN_CREATE_ERROR, e.getMessage())
+//            );
+//        }
+//    }
+    
+    @GetMapping("/user/me")
+    public ResponseEntity<?> getUserDetails(Authentication authentication) {
+        try {
+            User customUserDetails = (User) authentication.getPrincipal();
             String userId = customUserDetails.getUsername();
-            String role =
-                    customUserDetails.getAuthorities().iterator().next().getAuthority();
-            String token = jwtUtil.createJwtToken(userId,role,expiredMs);
-
+            String role = customUserDetails.getAuthorities().iterator().next().getAuthority();
             return ResponseEntity.ok(UserLogin.Response.builder()
                     .userId(userId)
-                    .token(token)
-                    .description("토큰이 성공적으로 발급되었습니다.")
+                    .description("Role :"+ role)
                     .build());
-        }catch (AuthenticationException e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    new ErrorResponse(ErrorCode.TOKEN_CREATE_ERROR, e.getMessage())
+                    new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, "사용자 정보를 가져올 수 없습니다.")
             );
         }
     }

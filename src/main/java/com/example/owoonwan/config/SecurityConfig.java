@@ -30,8 +30,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil);
-//        loginFilter.setFilterProcessesUrl("/api/auth/login");
+        AuthenticationManager authManager =
+                authenticationManager(authenticationConfiguration);
+        LoginFilter loginFilter = new LoginFilter(authManager,jwtUtil);
+        loginFilter.setFilterProcessesUrl("/login");
 
         http
                 .csrf(csrf -> csrf.disable())
@@ -44,14 +46,14 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(form -> form
-                        .disable());
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/user/me",true)
+                        .permitAll());
 
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
-
-//        http
-//                .addFilterAt(loginFilter,
-//                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
+                .addFilterAt(loginFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
