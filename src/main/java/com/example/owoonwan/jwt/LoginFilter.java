@@ -29,7 +29,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        // JSON 데이터를 파싱하여 userId와 password를 추출합니다.
+        // JSON 데이터를 파싱하여 userId와 password를 추출
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> requestMap;
 

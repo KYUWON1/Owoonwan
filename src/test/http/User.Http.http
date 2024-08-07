@@ -14,7 +14,7 @@ POST http://localhost:8080/user/register
 Content-Type: application/json
 
 {
-  "verifyCode": "494740"
+  "verifyCode": "238095"
 }
 
 ###  user login
@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ### user info get
 GET http://localhost:8080/user/test12
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMjkyNzgxOCwiZXhwIjoxNzIyOTYzODE4fQ._zV9AZbIrj-btO6m1hVyqiGu6tNRLKMATWYC2c2B4IM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAxMzQ4MSwiZXhwIjoxNzIzMDQ5NDgxfQ.fngsrAG3R1e5OR0P9w1LB09Xh0fhwBg8yOax0PQ55fM
 
 ### user delete
 DELETE http://localhost:8080/user/test12
