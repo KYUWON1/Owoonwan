@@ -1,6 +1,7 @@
 package com.example.owoonwan.controller;
 
 import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.UserDetailsDto;
 import com.example.owoonwan.dto.response.ErrorResponse;
 import com.example.owoonwan.dto.response.UserLogin;
 import com.example.owoonwan.jwt.JwtUtil;
@@ -56,7 +57,7 @@ public class LoginController {
     @GetMapping("/user/me")
     public ResponseEntity<?> getUserDetails(Authentication authentication) {
         try {
-            User customUserDetails = (User) authentication.getPrincipal();
+            UserDetailsDto customUserDetails = (UserDetailsDto) authentication.getPrincipal();
             String userId = customUserDetails.getUsername();
             String role = customUserDetails.getAuthorities().iterator().next().getAuthority();
             return ResponseEntity.ok(UserLogin.Response.builder()

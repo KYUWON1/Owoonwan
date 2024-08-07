@@ -14,7 +14,7 @@ POST http://localhost:8080/user/register
 Content-Type: application/json
 
 {
-  "verifyCode": "585072"
+  "verifyCode": "496613"
 }
 
 ###  user login
@@ -28,11 +28,11 @@ Content-Type: application/json
 
 ### get login info
 GET http://localhost:8080/user/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAxNzk1OSwiZXhwIjoxNzIzMDUzOTU5fQ.sWVNiuGatYUTdacLwQ7zXWIaEcSNVhniZjZxaUT1Ipw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAyMTYzNCwiZXhwIjoxNzIzMDU3NjM0fQ.hbp2qQ3mMI8GvQx5tdc_4pwMEZ7MfjJZXJTBvwtoevQ
 
 ### user info get
 GET http://localhost:8080/user/test12
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAxMzQ4MSwiZXhwIjoxNzIzMDQ5NDgxfQ.fngsrAG3R1e5OR0P9w1LB09Xh0fhwBg8yOax0PQ55fM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAyMTYzNCwiZXhwIjoxNzIzMDU3NjM0fQ.hbp2qQ3mMI8GvQx5tdc_4pwMEZ7MfjJZXJTBvwtoevQ
 
 ### user delete
 DELETE http://localhost:8080/user/test12

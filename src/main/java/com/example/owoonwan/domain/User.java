@@ -25,7 +25,7 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users") //user는 예약어라 h2에서 사용불가
-public class User implements UserDetails {
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,16 +54,5 @@ public class User implements UserDetails {
 
     @LastModifiedDate
     private Date updatedAt;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = this.getRole().toString();
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
-    }
-
-    @Override
-    public String getUsername() {
-        return this.getUserId();
-    }
 
 }

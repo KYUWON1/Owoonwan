@@ -1,6 +1,7 @@
 package com.example.owoonwan.jwt;
 
 import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.UserDetailsDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,8 +55,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             , FilterChain chain
             , Authentication authentication
     ) throws IOException {
-        User user =
-                (User) authentication.getPrincipal();
+        UserDetailsDto user =
+                (UserDetailsDto) authentication.getPrincipal();
         // userId를 반환
         String userId = user.getUsername();
 

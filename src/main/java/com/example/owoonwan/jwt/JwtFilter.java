@@ -1,6 +1,7 @@
 package com.example.owoonwan.jwt;
 
 import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.UserDetailsDto;
 import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.UserRole;
@@ -49,9 +50,11 @@ public class JwtFilter extends OncePerRequestFilter {
                     .role(UserRole.valueOf(role))
                     .build();
 
+            UserDetailsDto userDetail = new UserDetailsDto(user);
+
             Authentication authToken =
-                    new UsernamePasswordAuthenticationToken(user
-                            ,null,user.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetail
+                            ,null,userDetail.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
             filterChain.doFilter(request,response);
         }catch(ExpiredJwtException e){
