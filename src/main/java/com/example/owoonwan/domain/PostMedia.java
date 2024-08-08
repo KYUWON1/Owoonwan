@@ -2,6 +2,8 @@ package com.example.owoonwan.domain;
 
 import com.example.owoonwan.type.MediaType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -9,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "post_media")
 @EntityListeners(AuditingEntityListener.class)
@@ -24,7 +28,8 @@ public class PostMedia {
     @NotNull
     private String url;
 
-    @NotNull
+    @NotNull()
+    @Enumerated(EnumType.STRING)
     private MediaType type;
 
     // order 예약어 사용불가
