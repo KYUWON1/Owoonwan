@@ -18,6 +18,11 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password: tlarb3011
 jwt:
   secret: rjsrnreogkrrytlarbdnjsdlqslekrkatkgkqslekaaavvvvvvrlrlrldjfuqwl
 cloud:

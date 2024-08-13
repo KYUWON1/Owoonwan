@@ -1,7 +1,7 @@
 package com.example.owoonwan.controller;
 
 import com.example.owoonwan.dto.response.*;
-import com.example.owoonwan.dto.UserInfoDto;
+import com.example.owoonwan.dto.dto.UserInfoDto;
 import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.service.SmsVerificationService;
 import com.example.owoonwan.type.ErrorCode;

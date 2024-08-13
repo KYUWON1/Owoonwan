@@ -1,7 +1,7 @@
 package com.example.owoonwan.config;
 
 import com.example.owoonwan.domain.User;
-import com.example.owoonwan.repository.UserRepository;
+import com.example.owoonwan.repository.jpa.UserRepository;
 import com.example.owoonwan.type.UserRole;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

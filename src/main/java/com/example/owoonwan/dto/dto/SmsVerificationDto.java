@@ -1,4 +1,4 @@
-package com.example.owoonwan.dto;
+package com.example.owoonwan.dto.dto;
 
 import lombok.*;
 
@@ -7,7 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreatePostDto {
+public class SmsVerificationDto {
     private String userId;
-    private Long postId;
 }

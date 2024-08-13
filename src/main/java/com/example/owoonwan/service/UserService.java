@@ -1,14 +1,14 @@
 package com.example.owoonwan.service;
 
-import com.example.owoonwan.dto.UserDetailsDto;
-import com.example.owoonwan.dto.UserInfoDto;
-import com.example.owoonwan.dto.UserJoinDto;
+import com.example.owoonwan.dto.dto.UserDetailsDto;
+import com.example.owoonwan.dto.dto.UserInfoDto;
+import com.example.owoonwan.dto.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.DeleteUser;
 import com.example.owoonwan.dto.response.UpdateUserIdAndNickName;
 import com.example.owoonwan.dto.response.UpdateUserPassword;
 import com.example.owoonwan.exception.UserException;
 import com.example.owoonwan.exception.VerifyException;
-import com.example.owoonwan.repository.UserRepository;
+import com.example.owoonwan.repository.jpa.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.UserRole;
 import com.example.owoonwan.domain.User;

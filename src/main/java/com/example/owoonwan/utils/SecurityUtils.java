@@ -1,11 +1,10 @@
 package com.example.owoonwan.utils;
 
-import com.example.owoonwan.dto.UserDetailsDto;
+import com.example.owoonwan.dto.dto.UserDetailsDto;
 import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.type.ErrorCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public class SecurityUtils {
     public static String getUserIdFromToken(){

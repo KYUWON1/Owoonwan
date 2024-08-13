@@ -1,7 +1,6 @@
 package com.example.owoonwan.jwt;
 
-import com.example.owoonwan.domain.User;
-import com.example.owoonwan.dto.UserDetailsDto;
+import com.example.owoonwan.dto.dto.UserDetailsDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,10 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;

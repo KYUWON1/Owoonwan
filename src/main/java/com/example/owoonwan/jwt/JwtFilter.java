@@ -1,7 +1,7 @@
 package com.example.owoonwan.jwt;
 
 import com.example.owoonwan.domain.User;
-import com.example.owoonwan.dto.UserDetailsDto;
+import com.example.owoonwan.dto.dto.UserDetailsDto;
 import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.UserRole;

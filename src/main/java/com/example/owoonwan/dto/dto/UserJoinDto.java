@@ -1,4 +1,4 @@
-package com.example.owoonwan.dto;
+package com.example.owoonwan.dto.dto;
 
 import com.example.owoonwan.domain.User;
 import lombok.*;

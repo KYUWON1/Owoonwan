@@ -1,16 +1,20 @@
 package com.example.owoonwan.service;
 
 import com.example.owoonwan.domain.PostMedia;
-import com.example.owoonwan.dto.SavePostMediaDto;
+import com.example.owoonwan.dto.dto.GetPostMediaDto;
+import com.example.owoonwan.dto.dto.SavePostMediaDto;
 import com.example.owoonwan.exception.MediaException;
-import com.example.owoonwan.repository.PostMediaRepository;
-import com.example.owoonwan.repository.PostRepository;
+import com.example.owoonwan.repository.jpa.PostMediaRepository;
+import com.example.owoonwan.repository.jpa.PostRepository;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.MediaType;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -22,6 +26,7 @@ public class PostMediaService {
     private final PostRepository postRepository;
     private final S3Service s3Service;
 
+    @Transactional
     public SavePostMediaDto savePostMedia(
             Long postId,
             List<MultipartFile> files
@@ -50,6 +55,18 @@ public class PostMediaService {
             }
         }
         return result;
+    }
+
+    @Transactional
+    public GetPostMediaDto getPostMedium(Long postId) {
+        List<PostMedia> allByPostId =
+                postMediaRepository.findAllByPostId(postId);
+        if(allByPostId.isEmpty()){
+            return GetPostMediaDto.builder()
+                    .postId(postId)
+                    .build();
+        }
+        return GetPostMediaDto.fromDomain(postId,allByPostId);
     }
 
     private String generateFileUrl(String fileName,MediaType type){
@@ -94,4 +111,6 @@ public class PostMediaService {
             "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "mpeg", "mpg", "3gp",
             "ogg", "m4v", "asf", "vob", "rmvb"
     );
+
+
 }

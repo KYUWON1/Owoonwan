@@ -1,9 +1,9 @@
 package com.example.owoonwan.service;
 
 import com.example.owoonwan.domain.User;
-import com.example.owoonwan.dto.SmsVerificationDto;
+import com.example.owoonwan.dto.dto.SmsVerificationDto;
 import com.example.owoonwan.exception.VerifyException;
-import com.example.owoonwan.repository.UserRepository;
+import com.example.owoonwan.repository.jpa.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoSession;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.util.ReflectionTestUtils;

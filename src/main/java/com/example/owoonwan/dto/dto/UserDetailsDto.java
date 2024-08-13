@@ -1,4 +1,4 @@
-package com.example.owoonwan.dto;
+package com.example.owoonwan.dto.dto;
 
 import com.example.owoonwan.domain.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class UserDetailsDto implements UserDetails {
 

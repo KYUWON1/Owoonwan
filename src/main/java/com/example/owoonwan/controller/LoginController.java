@@ -1,7 +1,6 @@
 package com.example.owoonwan.controller;
 
-import com.example.owoonwan.domain.User;
-import com.example.owoonwan.dto.UserDetailsDto;
+import com.example.owoonwan.dto.dto.UserDetailsDto;
 import com.example.owoonwan.dto.response.ErrorResponse;
 import com.example.owoonwan.dto.response.UserLogin;
 import com.example.owoonwan.jwt.JwtUtil;
@@ -10,12 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
