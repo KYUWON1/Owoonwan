@@ -11,9 +11,9 @@ import java.util.List;
 
 public class UserDetailsDto implements UserDetails {
 
-    private final User user;
+    private final UserDto user;
 
-    public UserDetailsDto(User user){
+    public UserDetailsDto(UserDto user){
         this.user = user;
     }
 

@@ -1,6 +1,7 @@
 package com.example.owoonwan.service;
 
 import com.example.owoonwan.dto.UserDetailsDto;
+import com.example.owoonwan.dto.UserDto;
 import com.example.owoonwan.dto.UserInfoDto;
 import com.example.owoonwan.dto.UserJoinDto;
 import com.example.owoonwan.dto.response.DeleteUser;
@@ -132,10 +133,16 @@ public class UserService implements UserDetailsService {
     // 스프링 시큐리티로 로그인시 사용자 조회를 할수있게 해주는 메소드
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User result = userRepository.findByUserId(userId)
+        User findUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User with ID '" + userId + "' not found"));
-        UserDetailsDto user = new UserDetailsDto(result);
-        return user;
+
+        UserDto result = UserDto.builder()
+                .userId(findUser.getUserId())
+                .password(findUser.getPassword())
+                .role(findUser.getRole())
+                .build();
+
+        return new UserDetailsDto(result);
     }
 
 

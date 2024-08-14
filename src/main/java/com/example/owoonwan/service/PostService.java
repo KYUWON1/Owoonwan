@@ -13,10 +13,10 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public CreatePostDto createPost(String userId, String comment) {
+    public CreatePostDto createPost(String userId, String content) {
         Post post = new Post();
         post.setUserId(userId);
-        post.setContent(comment);
+        post.setContent(content);
 
         Post result = postRepository.save(post);
 

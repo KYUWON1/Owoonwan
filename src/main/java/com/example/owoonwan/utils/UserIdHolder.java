@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class SecurityUtils {
+public class UserIdHolder {
     public static String getUserIdFromToken(){
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
