@@ -8,6 +8,7 @@ import com.example.owoonwan.repository.jpa.PostRepository;
 import com.example.owoonwan.type.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,10 +25,10 @@ public class PostService {
     private final int PAGE_SIZE = 10;
 
     @Transactional
-    public CreatePostDto createPost(String userId, String comment) {
+    public CreatePostDto createPost(String userId, String content) {
         Post post = new Post();
         post.setUserId(userId);
-        post.setContent(comment);
+        post.setContent(content);
 
         Post result = postRepository.save(post);
 
@@ -37,7 +38,7 @@ public class PostService {
                 .build();
     }
 
-    //@Cacheable(key = "#postId", value = "postCache")
+    @Cacheable(key = "#postId", value = "postCache")
     @Transactional
     public GetPostDto getPostDetail(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(

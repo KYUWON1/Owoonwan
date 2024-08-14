@@ -6,7 +6,7 @@ import com.example.owoonwan.type.ErrorCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class SecurityUtils {
+public class UserIdHolder {
     public static String getUserIdFromToken(){
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();

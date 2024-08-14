@@ -10,6 +10,7 @@ import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.MediaType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +24,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PostMediaService {
     private final PostMediaRepository postMediaRepository;
-    private final PostRepository postRepository;
     private final S3Service s3Service;
 
     @Transactional
@@ -33,12 +33,11 @@ public class PostMediaService {
     ) throws IOException {
         SavePostMediaDto result = new SavePostMediaDto();
 
-        fileListIsValid(files,postId);
         Integer order = 1;
 
         for(MultipartFile file : files){
             String fileName = file.getOriginalFilename();
-            MediaType type = checkFileExtensionAndSort(fileName,postId);
+            MediaType type = fileExtensionSort(fileName);
             String fileUrl = generateFileUrl(fileName,type);
 
             PostMedia media = new PostMedia();
@@ -53,11 +52,13 @@ public class PostMediaService {
                 result.setMediaId(save.getMediaId());
                 result.setUrl(url);
             }
+            order++;
         }
         return result;
     }
 
     @Transactional
+    @Cacheable(key = "'media' + #postId", value = "postMediaCache")
     public GetPostMediaDto getPostMedium(Long postId) {
         List<PostMedia> allByPostId =
                 postMediaRepository.findAllByPostId(postId);
@@ -77,40 +78,20 @@ public class PostMediaService {
         return date +"/"+mediaType+"/"+uuid+extension;
     }
 
-     private MediaType checkFileExtensionAndSort(String fileName,Long postId){
+     private MediaType fileExtensionSort(String fileName){
         int lastDotIndex = fileName.lastIndexOf(".");
-        if(lastDotIndex == -1){
-            postRepository.deleteById(postId);
-            throw new MediaException(ErrorCode.FILE_EXTENSION_NOT_EXIST);
-        }
+
         String extension = fileName.substring(lastDotIndex+1).toLowerCase();
 
         if(IMAGE_EXTENSIONS.contains(extension)){
             return MediaType.IMAGE;
-        }else if(VIDEO_EXTENSIONS.contains(extension)){
+        }else {
             return MediaType.VIDEO;
-        }else{
-            postRepository.deleteById(postId);
-            throw new MediaException(ErrorCode.FILE_EXTENSION_UNKNOWN);
         }
-     }
-
-     private void fileListIsValid(List<MultipartFile> files,Long postId){
-         // files 이 빈상태로 날라오면 size는 0이 아님. 별도의 예외처리
-         if (files == null || files.isEmpty() || files.stream().allMatch(file -> file.isEmpty())) {
-             postRepository.deleteById(postId);
-             throw new MediaException(ErrorCode.FILE_IS_EMPTY);
-         }
      }
 
     private static final List<String> IMAGE_EXTENSIONS = List.of(
             "jpg", "jpeg", "png", "gif", "bmp", "tif", "tiff", "webp", "svg", "heic"
     );
-
-    private static final List<String> VIDEO_EXTENSIONS = List.of(
-            "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "mpeg", "mpg", "3gp",
-            "ogg", "m4v", "asf", "vob", "rmvb"
-    );
-
 
 }

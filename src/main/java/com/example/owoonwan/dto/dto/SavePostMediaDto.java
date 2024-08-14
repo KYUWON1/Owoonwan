@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SavePostMediaDto {
-    Long mediaId;
-    String url;
+    private Long mediaId;
+    private String url;
 }
