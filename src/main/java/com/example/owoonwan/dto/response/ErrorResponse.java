@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ErrorResponse extends Throwable {
+public class ErrorResponse{
     private ErrorCode errorCode;
     private String errorMessage;
 }

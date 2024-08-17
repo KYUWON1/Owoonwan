@@ -14,7 +14,7 @@ POST http://localhost:8080/user/register
 Content-Type: application/json
 
 {
-  "verifyCode": "443516"
+  "verifyCode": "496613"
 }
 
 ###  user login
@@ -22,6 +22,39 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-  "userId": "test12",
-  "password": "content"
+  "userId": "test",
+  "password": "1234"
+}
+
+### get login info
+GET http://localhost:8080/user/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAyMTYzNCwiZXhwIjoxNzIzMDU3NjM0fQ.hbp2qQ3mMI8GvQx5tdc_4pwMEZ7MfjJZXJTBvwtoevQ
+
+### user info get
+GET http://localhost:8080/user/test12
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMzAyMTYzNCwiZXhwIjoxNzIzMDU3NjM0fQ.hbp2qQ3mMI8GvQx5tdc_4pwMEZ7MfjJZXJTBvwtoevQ
+
+### user delete
+DELETE http://localhost:8080/user/test12
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMjkyNzgxOCwiZXhwIjoxNzIyOTYzODE4fQ._zV9AZbIrj-btO6m1hVyqiGu6tNRLKMATWYC2c2B4IM
+
+### user info update
+PATCH http://localhost:8080/user/testinfo3/info
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMjkzMDg4NywiZXhwIjoxNzIyOTY2ODg3fQ.sweqyR1WGyeCWfCkTLaUq331d37Fg_YLbVWgTJ6b7hA
+
+{
+  "userId": "testinfo2",
+  "nickName": "testinf2"
+}
+
+### user password update
+PATCH http://localhost:8080/user/test12/password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJ0ZXN0MTIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcyMjkzMDg4NywiZXhwIjoxNzIyOTY2ODg3fQ.sweqyR1WGyeCWfCkTLaUq331d37Fg_YLbVWgTJ6b7hA
+
+{
+  "passwordBefore": "content",
+  "passwordAfter": "12341234",
+  "passwordDoubleCheck": "12341234"
 }

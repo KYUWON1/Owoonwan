@@ -1,6 +1,7 @@
 package com.example.owoonwan.jwt;
 
 import com.example.owoonwan.domain.User;
+import com.example.owoonwan.dto.UserDetailsDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        // JSON 데이터를 파싱하여 userId와 password를 추출합니다.
+        // JSON 데이터를 파싱하여 userId와 password를 추출
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> requestMap;
 
@@ -54,8 +55,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             , FilterChain chain
             , Authentication authentication
     ) throws IOException {
-        User user =
-                (User) authentication.getPrincipal();
+        UserDetailsDto user =
+                (UserDetailsDto) authentication.getPrincipal();
         // userId를 반환
         String userId = user.getUsername();
 

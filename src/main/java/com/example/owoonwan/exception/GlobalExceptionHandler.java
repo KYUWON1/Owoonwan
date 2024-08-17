@@ -9,6 +9,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(MediaException.class)
+    public ErrorResponse handleUserException(MediaException e){
+        log.error("Media exception {} is occurred.");
+        return new ErrorResponse(e.getErrorCode(),e.getDescription());
+    }
+
+    @ExceptionHandler(PostException.class)
+    public ErrorResponse handleUserException(PostException e){
+        log.error("Post exception {} is occurred.");
+        return new ErrorResponse(e.getErrorCode(),e.getDescription());
+    }
+
     @ExceptionHandler(UserException.class)
     public ErrorResponse handleUserException(UserException e){
         log.error("User exception {} is occurred.");
@@ -17,7 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(VerifyException.class)
     public ErrorResponse handleVerifyException(VerifyException e){
-        log.error("Verify exception {} is occurred.");
+        log.error("Verify exception {} is occurred.",e.getDescription());
         return new ErrorResponse(e.getErrorCode(),e.getDescription());
     }
     // 최종 예외처리

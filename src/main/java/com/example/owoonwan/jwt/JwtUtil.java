@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -17,8 +18,9 @@ public class JwtUtil {
     private SecretKey secretKey;
 
     public JwtUtil (@Value("${jwt.secret}") String secretKey){
+        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
         this.secretKey =
-                new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8),
+                new SecretKeySpec(decodedKey,
                         "HmacSHA256");
     }
 
