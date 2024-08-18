@@ -28,7 +28,6 @@ public class PostController {
     private final PostService postService;
     private final PostMediaService postMediaService;
     private final static Long MAX_FILE_COUNT = 10L;
-    private final PostRepository postRepository;
 
     @PostMapping
     public CreatePostResponse createPost(
@@ -45,10 +44,7 @@ public class PostController {
 
         // 미디어파일이 없을경우
         if (files == null || files.isEmpty()) {
-            return CreatePostResponse.builder()
-                    .userId(post.getUserId())
-                    .postId(post.getPostId())
-                    .build();
+            return CreatePostResponse.from(post);
         }
 
         // 파일이 존재할 경우 최대 10개만 등록가능
@@ -62,12 +58,7 @@ public class PostController {
             throw new PostException(ErrorCode.S3_PUT_EXCEPTION);
         }
 
-        return CreatePostResponse.builder()
-                .userId(post.getUserId())
-                .postId(post.getPostId())
-                .mediaId(media.getMediaId())
-                .url(media.getUrl())
-                .build();
+        return CreatePostResponse.from(post,media);
     }
 
     @GetMapping
@@ -116,7 +107,7 @@ public class PostController {
             @PathVariable Long postId,
             @RequestPart(required = false) List<MultipartFile> files,
             @RequestPart String content
-    ) throws IOException {
+    ){
         if(files != null && !files.isEmpty()){
             checkFileExtension(files);
         }
@@ -127,21 +118,21 @@ public class PostController {
         // 미디어파일이 없을경우, 해당 게시글의 미디어 파일 삭제
         if (files == null || files.isEmpty()) {
             postMediaService.deletePostMedia(postId);
-
-            return UpdatePostResponse.builder()
-                    .userId(post.getUserId())
-                    .postId(post.getPostId())
-                    .build();
+            return UpdatePostResponse.from(post);
         }
         // 미디어 파일이 있을경우,
-        SavePostMediaDto media = postMediaService.updatePostMedia(post.getPostId(), files);
+        SavePostMediaDto media;
+        // 파일이 존재할 경우 최대 10개만 등록가능
+        if (files.size() > MAX_FILE_COUNT) {
+            throw new PostException(ErrorCode.MAX_POST_SIZE_10);
+        }
+        try {
+            media = postMediaService.savePostMedia(post.getPostId(), files);
+        } catch (IOException e) {
+            throw new PostException(ErrorCode.S3_PUT_EXCEPTION);
+        }
 
-        return UpdatePostResponse.builder()
-                .userId(post.getUserId())
-                .postId(post.getPostId())
-                .mediaId(media.getMediaId())
-                .url(media.getUrl())
-                .build();
+        return UpdatePostResponse.from(post,media);
     }
 
     @DeleteMapping("/{postId}")
@@ -150,14 +141,9 @@ public class PostController {
     ){
         String userId = UserIdHolder.getUserIdFromToken();
         DeletePostDto deletePostDto = postService.deletePost(postId, userId);
-        deletePostMediaDto deletePostMediaDto =
-                postMediaService.deletePostMedia(postId);
+        postMediaService.deletePostMedia(postId);
 
-        return DeletePostResponse.builder()
-                .deletedAt(deletePostMediaDto.getDeletedAt())
-                .postId(deletePostDto.getPostId())
-                .userId(userId)
-                .build();
+        return DeletePostResponse.from(deletePostDto,userId);
     }
 
 

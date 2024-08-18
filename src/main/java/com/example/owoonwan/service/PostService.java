@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,11 +88,8 @@ public class PostService {
 
     @Transactional
     public DeletePostDto deletePost(Long postId, String userId) {
-        String cacheKey = "postCache:" + postId;
         // 캐시 삭제
-        if(redisTemplate.hasKey(cacheKey)){
-            redisTemplate.delete(cacheKey);
-        }
+        deleteRedisCache(postId);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 
@@ -123,15 +119,24 @@ public class PostService {
         Post save = postRepository.save(post);
 
         // Post 캐시 갱신
-        String cacheKey = "postCache:" + postId;
-        if(redisTemplate.hasKey(cacheKey)){
-            redisTemplate.delete(cacheKey);
-        }
-        redisTemplate.opsForValue().set(cacheKey,GetPostDto.FromEntity(save));
+        deleteRedisCache(postId);
+        putRedisCache(postId,save);
 
         return UpdatePostDto.builder()
                 .userId(save.getUserId())
                 .postId(save.getPostId())
                 .build();
+    }
+
+    private void deleteRedisCache(Long postId){
+        String cacheKey = "postCache:" + postId;
+        if(redisTemplate.hasKey(cacheKey)){
+            redisTemplate.delete(cacheKey);
+        }
+    }
+
+    private void putRedisCache(Long postId,Post post){
+        String cacheKey = "postCache:" + postId;
+        redisTemplate.opsForValue().set(cacheKey,GetPostDto.FromEntity(post));
     }
 }

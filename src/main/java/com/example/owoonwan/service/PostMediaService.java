@@ -38,29 +38,7 @@ public class PostMediaService {
             Long postId,
             List<MultipartFile> files
     ) throws IOException {
-        SavePostMediaDto result = new SavePostMediaDto();
-
-        Integer order = 1;
-
-        for(MultipartFile file : files){
-            String fileName = file.getOriginalFilename();
-            MediaType type = fileExtensionSort(fileName);
-            String fileUrl = generateFileUrl(fileName,type);
-
-            PostMedia media = new PostMedia();
-            media.setPostId(postId);
-            media.setUrl(fileUrl);
-            media.setType(type);
-            media.setSequence(order);
-
-            String url = s3Service.uploadFile(file, fileUrl);
-            PostMedia save = postMediaRepository.save(media);
-            if(order == 1){
-                result.setMediaId(save.getMediaId());
-                result.setUrl(url);
-            }
-            order++;
-        }
+        SavePostMediaDto result = saveFileListToDbAndS3(postId, files);
         return result;
     }
 
@@ -96,11 +74,7 @@ public class PostMediaService {
 
     @Transactional
     public deletePostMediaDto deletePostMedia(Long postId) {
-        String cacheKey = "postMediaCache:" + postId;
-        // 캐시 삭제
-        if(redisTemplate.hasKey(cacheKey)){
-            redisTemplate.delete(cacheKey);
-        }
+        deleteRedisCache(postId);
         List<PostMedia> allByPostId =
                 postMediaRepository.findAllByPostId(postId);
 
@@ -131,6 +105,33 @@ public class PostMediaService {
             postMediaRepository.deleteAll(existingMedia);
         }
 
+        SavePostMediaDto result = saveFileListToDbAndS3(postId, files);
+
+        // 캐시 갱신
+        deleteRedisCache(postId);
+
+        List<PostMedia> updatedMediaList =
+                postMediaRepository.findAllByPostId(postId);
+        putRedisCache(postId,updatedMediaList);
+
+        return result;
+    }
+
+    private void deleteRedisCache(Long postId){
+        String cacheKey = "postMediaCache:" + postId;
+        if(redisTemplate.hasKey(cacheKey)){
+            redisTemplate.delete(cacheKey);
+        }
+    }
+
+    private void putRedisCache(Long postId,List<PostMedia> updatedMediaList){
+        String cacheKey = "postMediaCache:" + postId;
+        GetPostMediaDto updatedPostMediaDto = GetPostMediaDto.fromDomain(postId,
+                updatedMediaList);
+        redisTemplate.opsForValue().set(cacheKey,updatedPostMediaDto);
+    }
+
+    private SavePostMediaDto saveFileListToDbAndS3(Long postId,List<MultipartFile> files) throws IOException {
         Integer order = 1;
         SavePostMediaDto result = new SavePostMediaDto();
         for(MultipartFile file : files){
@@ -154,18 +155,6 @@ public class PostMediaService {
             }
             order++;
         }
-
-        // 캐시 갱신
-        String cacheKey = "postMediaCache:" + postId;
-        if(redisTemplate.hasKey(cacheKey)){
-            redisTemplate.delete(cacheKey);
-        }
-        List<PostMedia> updatedMediaList =
-                postMediaRepository.findAllByPostId(postId);
-        GetPostMediaDto updatedPostMediaDto = GetPostMediaDto.fromDomain(postId,
-                updatedMediaList);
-        redisTemplate.opsForValue().set(cacheKey,updatedPostMediaDto);
-
         return result;
     }
 
