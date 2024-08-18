@@ -2,9 +2,11 @@ package com.example.owoonwan.controller;
 
 import com.example.owoonwan.dto.dto.*;
 import com.example.owoonwan.dto.response.CreatePostResponse;
+import com.example.owoonwan.dto.response.DeletePostResponse;
 import com.example.owoonwan.dto.response.GetPostMediaResponse;
 import com.example.owoonwan.exception.MediaException;
 import com.example.owoonwan.exception.PostException;
+import com.example.owoonwan.repository.jpa.PostRepository;
 import com.example.owoonwan.service.PostMediaService;
 import com.example.owoonwan.service.PostService;
 import com.example.owoonwan.type.ErrorCode;
@@ -25,6 +27,7 @@ public class PostController {
     private final PostService postService;
     private final PostMediaService postMediaService;
     private final static Long MAX_FILE_COUNT = 10L;
+    private final PostRepository postRepository;
 
     @PostMapping
     public CreatePostResponse createPost(
@@ -106,6 +109,23 @@ public class PostController {
         // 미디어 파일 존재시
         return GetPostMediaResponse.fromExistMedia(post,medium.getMediaInfos());
     }
+
+    @DeleteMapping("/{postId}")
+    public DeletePostResponse deletePost(
+            @PathVariable Long postId
+    ){
+        String userId = UserIdHolder.getUserIdFromToken();
+        DeletePostDto deletePostDto = postService.deletePost(postId, userId);
+        deletePostMediaDto deletePostMediaDto =
+                postMediaService.deletePostMedia(postId);
+
+        return DeletePostResponse.builder()
+                .deletedAt(deletePostMediaDto.getDeletedAt())
+                .postId(deletePostDto.getPostId())
+                .userId(userId)
+                .build();
+    }
+
 
 
     private void checkFileExtension(List<MultipartFile> files){

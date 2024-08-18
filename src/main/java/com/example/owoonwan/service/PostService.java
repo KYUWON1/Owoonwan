@@ -2,8 +2,10 @@ package com.example.owoonwan.service;
 
 import com.example.owoonwan.domain.Post;
 import com.example.owoonwan.dto.dto.CreatePostDto;
+import com.example.owoonwan.dto.dto.DeletePostDto;
 import com.example.owoonwan.dto.dto.GetPostDto;
 import com.example.owoonwan.exception.PostException;
+import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.repository.jpa.PostRepository;
 import com.example.owoonwan.type.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -19,7 +21,10 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,4 +88,25 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public DeletePostDto deletePost(Long postId, String userId) {
+        String cacheKey = "postCache:" + postId;
+        // 캐시 삭제
+        if(redisTemplate.hasKey(cacheKey)){
+            redisTemplate.delete(cacheKey);
+        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+
+        if(!post.getUserId().equals(userId)){
+            throw new VerifyException(ErrorCode.USER_INFO_UN_MATCH);
+        }
+
+        postRepository.delete(post);
+
+        return DeletePostDto.builder()
+                .postId(post.getPostId())
+                .deletedAt(new Date())
+                .build();
+    }
 }

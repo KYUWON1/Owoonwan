@@ -3,6 +3,7 @@ package com.example.owoonwan.service;
 import com.example.owoonwan.domain.PostMedia;
 import com.example.owoonwan.dto.dto.GetPostMediaDto;
 import com.example.owoonwan.dto.dto.SavePostMediaDto;
+import com.example.owoonwan.dto.dto.deletePostMediaDto;
 import com.example.owoonwan.exception.MediaException;
 import com.example.owoonwan.repository.jpa.PostMediaRepository;
 import com.example.owoonwan.repository.jpa.PostRepository;
@@ -93,6 +94,30 @@ public class PostMediaService {
         return getPostMediaDto;
     }
 
+    @Transactional
+    public deletePostMediaDto deletePostMedia(Long postId) {
+        String cacheKey = "postMediaCache:" + postId;
+        // 캐시 삭제
+        if(redisTemplate.hasKey(cacheKey)){
+            redisTemplate.delete(cacheKey);
+        }
+        List<PostMedia> allByPostId =
+                postMediaRepository.findAllByPostId(postId);
+
+        // 있다면 s3에서 삭제
+        if(!allByPostId.isEmpty()){
+            for(PostMedia post : allByPostId){
+                s3Service.deleteFile(post.getUrl());
+            }
+        }
+        postMediaRepository.deleteAll(allByPostId);
+
+        return deletePostMediaDto.builder()
+                .postId(postId)
+                .deletedAt(new Date())
+                .build();
+    }
+
     private String generateFileUrl(String fileName,MediaType type){
         String mediaType = type.toString();
         String uuid = UUID.randomUUID().toString();
@@ -116,5 +141,6 @@ public class PostMediaService {
     private static final List<String> IMAGE_EXTENSIONS = List.of(
             "jpg", "jpeg", "png", "gif", "bmp", "tif", "tiff", "webp", "svg", "heic"
     );
+
 
 }
