@@ -10,21 +10,27 @@ import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.MediaType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.print.Pageable;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PostMediaService {
     private final PostMediaRepository postMediaRepository;
     private final S3Service s3Service;
+    private final RedisTemplate redisTemplate;
 
     @Transactional
     public SavePostMediaDto savePostMedia(
@@ -58,16 +64,33 @@ public class PostMediaService {
     }
 
     @Transactional
-    @Cacheable(key = "'media' + #postId", value = "postMediaCache")
     public GetPostMediaDto getPostMedium(Long postId) {
-        List<PostMedia> allByPostId =
+        String cacheKey = "postMediaCache:" + postId;
+        ValueOperations<String,Object> valueOps = redisTemplate.opsForValue();
+        GetPostMediaDto cachedMedia = (GetPostMediaDto) valueOps.get(cacheKey);
+
+        if(cachedMedia != null){
+            redisTemplate.expire(cacheKey, Duration.ofMinutes(10));
+            log.info("Cache hit for media ID {}. TTL reset to 10 minutes.",
+                    postId);
+            return cachedMedia;
+        }
+
+        log.info("Cache miss for media ID {}, querying database...", postId);
+        List<PostMedia> allMediaByPostId =
                 postMediaRepository.findAllByPostId(postId);
-        if(allByPostId.isEmpty()){
-            return GetPostMediaDto.builder()
+
+        if(allMediaByPostId.isEmpty()){
+            GetPostMediaDto getPostMediaDto = GetPostMediaDto.builder()
                     .postId(postId)
                     .build();
+            valueOps.set(cacheKey,getPostMediaDto);
+            return getPostMediaDto;
         }
-        return GetPostMediaDto.fromDomain(postId,allByPostId);
+
+        GetPostMediaDto getPostMediaDto = GetPostMediaDto.fromDomain(postId, allMediaByPostId);
+        valueOps.set(cacheKey,getPostMediaDto);
+        return getPostMediaDto;
     }
 
     private String generateFileUrl(String fileName,MediaType type){

@@ -31,6 +31,8 @@ public class GetPostMediaDto {
     @Builder
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MediaInfo {
         private String url;
         private MediaType type;
