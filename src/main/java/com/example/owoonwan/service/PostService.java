@@ -4,6 +4,7 @@ import com.example.owoonwan.domain.Post;
 import com.example.owoonwan.dto.dto.CreatePostDto;
 import com.example.owoonwan.dto.dto.DeletePostDto;
 import com.example.owoonwan.dto.dto.GetPostDto;
+import com.example.owoonwan.dto.dto.UpdatePostDto;
 import com.example.owoonwan.exception.PostException;
 import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.repository.jpa.PostRepository;
@@ -11,7 +12,6 @@ import com.example.owoonwan.type.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +21,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +106,32 @@ public class PostService {
         return DeletePostDto.builder()
                 .postId(post.getPostId())
                 .deletedAt(new Date())
+                .build();
+    }
+
+    @Transactional
+    public UpdatePostDto updatePost(String content, String userId,
+                                    Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
+        
+        if(!post.getUserId().equals(userId)){
+            throw new VerifyException(ErrorCode.USER_INFO_UN_MATCH);
+        
+        }
+        post.setContent(content);
+        Post save = postRepository.save(post);
+
+        // Post 캐시 갱신
+        String cacheKey = "postCache:" + postId;
+        if(redisTemplate.hasKey(cacheKey)){
+            redisTemplate.delete(cacheKey);
+        }
+        redisTemplate.opsForValue().set(cacheKey,GetPostDto.FromEntity(save));
+
+        return UpdatePostDto.builder()
+                .userId(save.getUserId())
+                .postId(save.getPostId())
                 .build();
     }
 }

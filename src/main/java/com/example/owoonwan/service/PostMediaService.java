@@ -118,6 +118,57 @@ public class PostMediaService {
                 .build();
     }
 
+    @Transactional
+    public SavePostMediaDto updatePostMedia(Long postId, List<MultipartFile> files) throws IOException {
+        List<PostMedia> existingMedia =
+                postMediaRepository.findAllByPostId(postId);
+
+        // 있다면 s3에서 삭제
+        if(!existingMedia.isEmpty()){
+            for(PostMedia post : existingMedia){
+                s3Service.deleteFile(post.getUrl());
+            }
+            postMediaRepository.deleteAll(existingMedia);
+        }
+
+        Integer order = 1;
+        SavePostMediaDto result = new SavePostMediaDto();
+        for(MultipartFile file : files){
+            String filename = file.getOriginalFilename();
+            MediaType type = fileExtensionSort(filename);
+            String fileUrl = generateFileUrl(filename,type);
+
+            // PostMedia 엔티티 생성 및 저장
+            PostMedia media = new PostMedia();
+            media.setPostId(postId);
+            media.setUrl(fileUrl);
+            media.setType(type);
+            media.setSequence(order);
+
+            String url = s3Service.uploadFile(file, fileUrl);
+            PostMedia save = postMediaRepository.save(media);
+
+            if(order == 1){
+                result.setMediaId(save.getMediaId());
+                result.setUrl(url);
+            }
+            order++;
+        }
+
+        // 캐시 갱신
+        String cacheKey = "postMediaCache:" + postId;
+        if(redisTemplate.hasKey(cacheKey)){
+            redisTemplate.delete(cacheKey);
+        }
+        List<PostMedia> updatedMediaList =
+                postMediaRepository.findAllByPostId(postId);
+        GetPostMediaDto updatedPostMediaDto = GetPostMediaDto.fromDomain(postId,
+                updatedMediaList);
+        redisTemplate.opsForValue().set(cacheKey,updatedPostMediaDto);
+
+        return result;
+    }
+
     private String generateFileUrl(String fileName,MediaType type){
         String mediaType = type.toString();
         String uuid = UUID.randomUUID().toString();
@@ -141,6 +192,5 @@ public class PostMediaService {
     private static final List<String> IMAGE_EXTENSIONS = List.of(
             "jpg", "jpeg", "png", "gif", "bmp", "tif", "tiff", "webp", "svg", "heic"
     );
-
 
 }

@@ -4,6 +4,7 @@ import com.example.owoonwan.dto.dto.*;
 import com.example.owoonwan.dto.response.CreatePostResponse;
 import com.example.owoonwan.dto.response.DeletePostResponse;
 import com.example.owoonwan.dto.response.GetPostMediaResponse;
+import com.example.owoonwan.dto.response.UpdatePostResponse;
 import com.example.owoonwan.exception.MediaException;
 import com.example.owoonwan.exception.PostException;
 import com.example.owoonwan.repository.jpa.PostRepository;
@@ -108,6 +109,39 @@ public class PostController {
         }
         // 미디어 파일 존재시
         return GetPostMediaResponse.fromExistMedia(post,medium.getMediaInfos());
+    }
+
+    @PatchMapping("/{postId}")
+    public UpdatePostResponse updatePost(
+            @PathVariable Long postId,
+            @RequestPart(required = false) List<MultipartFile> files,
+            @RequestPart String content
+    ) throws IOException {
+        if(files != null && !files.isEmpty()){
+            checkFileExtension(files);
+        }
+
+        String userId = UserIdHolder.getUserIdFromToken();
+        UpdatePostDto post = postService.updatePost(content, userId, postId);
+
+        // 미디어파일이 없을경우, 해당 게시글의 미디어 파일 삭제
+        if (files == null || files.isEmpty()) {
+            postMediaService.deletePostMedia(postId);
+
+            return UpdatePostResponse.builder()
+                    .userId(post.getUserId())
+                    .postId(post.getPostId())
+                    .build();
+        }
+        // 미디어 파일이 있을경우,
+        SavePostMediaDto media = postMediaService.updatePostMedia(post.getPostId(), files);
+
+        return UpdatePostResponse.builder()
+                .userId(post.getUserId())
+                .postId(post.getPostId())
+                .mediaId(media.getMediaId())
+                .url(media.getUrl())
+                .build();
     }
 
     @DeleteMapping("/{postId}")

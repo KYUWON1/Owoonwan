@@ -1,13 +1,13 @@
 package com.example.owoonwan.dto.response;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class CreatePostResponse {
+public class UpdatePostResponse {
     private String userId;
     private Long postId;
     private Long mediaId;
