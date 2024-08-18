@@ -14,6 +14,7 @@ import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.MediaType;
 import com.example.owoonwan.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

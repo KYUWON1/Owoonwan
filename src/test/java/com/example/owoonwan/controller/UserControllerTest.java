@@ -80,7 +80,7 @@ class UserControllerTest {
         doNothing().when(smsVerificationService).sendVerificationCode(any(String.class));
 
         // When & Then
-        mockMvc.perform(post("/user/submit-form")
+        mockMvc.perform(post("/api/v1/user/submit-form")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .session(session)
@@ -110,7 +110,7 @@ class UserControllerTest {
                 .willReturn(user);
 
         // When & Then
-        mockMvc.perform(get("/user/{userId}",userId)
+        mockMvc.perform(get("/api/v1/user/{userId}",userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization","Bearer "+ token)
                         .with(csrf()))
@@ -134,7 +134,7 @@ class UserControllerTest {
         // When & Then
 
         // 문자열로 비교, enum타입으로 하면 jsonpath에러
-        mockMvc.perform(get("/user/{userId}",userId)
+        mockMvc.perform(get("/api/v1/user/{userId}",userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization","Bearer "+ token)
                         .with(csrf()))
@@ -160,7 +160,7 @@ class UserControllerTest {
                 .willReturn(user);
 
         // When & Then
-        mockMvc.perform(delete("/user/{userId}",userId)
+        mockMvc.perform(delete("/api/v1/user/{userId}",userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization","Bearer "+ token)
                         .with(csrf()))
@@ -196,7 +196,7 @@ class UserControllerTest {
                 .willReturn(response);
 
         // When & Then
-        mockMvc.perform(patch("/user/{userId}/info",userId)
+        mockMvc.perform(patch("/api/v1/user/{userId}/info",userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .header("Authorization","Bearer "+ token)
@@ -236,7 +236,7 @@ class UserControllerTest {
                 .willReturn(response);
 
         // When & Then
-        mockMvc.perform(patch("/user/{userId}/password",userId)
+        mockMvc.perform(patch("/api/v1/user/{userId}/password",userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .header("Authorization","Bearer "+ token)
