@@ -127,7 +127,7 @@ public class PostController {
             throw new PostException(ErrorCode.MAX_POST_SIZE_10);
         }
         try {
-            media = postMediaService.savePostMedia(post.getPostId(), files);
+            media = postMediaService.updatePostMedia(post.getPostId(), files);
         } catch (IOException e) {
             throw new PostException(ErrorCode.S3_PUT_EXCEPTION);
         }

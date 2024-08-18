@@ -67,7 +67,7 @@ public class PostService {
         GetPostDto postDto = GetPostDto.FromEntity(post);
 
         // 캐싱
-        valueOps.set(cacheKey, postDto);
+        valueOps.set(cacheKey, postDto,Duration.ofMinutes(10));
         return postDto;
     }
 
@@ -137,6 +137,6 @@ public class PostService {
 
     private void putRedisCache(Long postId,Post post){
         String cacheKey = "postCache:" + postId;
-        redisTemplate.opsForValue().set(cacheKey,GetPostDto.FromEntity(post));
+        redisTemplate.opsForValue().set(cacheKey,GetPostDto.FromEntity(post),Duration.ofMinutes(10));
     }
 }

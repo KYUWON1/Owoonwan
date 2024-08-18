@@ -68,7 +68,7 @@ public class PostMediaService {
         }
 
         GetPostMediaDto getPostMediaDto = GetPostMediaDto.fromDomain(postId, allMediaByPostId);
-        valueOps.set(cacheKey,getPostMediaDto);
+        valueOps.set(cacheKey,getPostMediaDto,Duration.ofMinutes(10));
         return getPostMediaDto;
     }
 
@@ -128,7 +128,8 @@ public class PostMediaService {
         String cacheKey = "postMediaCache:" + postId;
         GetPostMediaDto updatedPostMediaDto = GetPostMediaDto.fromDomain(postId,
                 updatedMediaList);
-        redisTemplate.opsForValue().set(cacheKey,updatedPostMediaDto);
+        redisTemplate.opsForValue().set(cacheKey,updatedPostMediaDto,
+                Duration.ofMinutes(10));
     }
 
     private SavePostMediaDto saveFileListToDbAndS3(Long postId,List<MultipartFile> files) throws IOException {
