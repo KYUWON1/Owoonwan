@@ -228,7 +228,7 @@ class PostControllerTest {
                         .sequence(1)
                         .updatedAt(new Date())
                         .build());
-        given(postService.getPosts(anyInt(),anyString()))
+        given(postService.getPosts(any()))
                 .willReturn(posts);
 
         given(postMediaService.getPostMedium(anyLong()))
@@ -264,7 +264,7 @@ class PostControllerTest {
                 .content("test content")
                 .updatedAt(new Date())
                 .build());
-        given(postService.getPosts(anyInt(),anyString()))
+        given(postService.getPosts(any()))
                 .willReturn(posts);
         given(postMediaService.getPostMedium(anyLong()))
                 .willReturn(GetPostMediaDto.builder()

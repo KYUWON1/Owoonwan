@@ -7,17 +7,18 @@ import com.example.owoonwan.dto.response.GetPostMediaResponse;
 import com.example.owoonwan.dto.response.UpdatePostResponse;
 import com.example.owoonwan.exception.MediaException;
 import com.example.owoonwan.exception.PostException;
-import com.example.owoonwan.repository.jpa.PostRepository;
 import com.example.owoonwan.service.PostMediaService;
 import com.example.owoonwan.service.PostService;
 import com.example.owoonwan.type.ErrorCode;
-import com.example.owoonwan.type.MediaType;
 import com.example.owoonwan.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
+@Slf4j
 public class PostController {
     private final PostService postService;
     private final PostMediaService postMediaService;
@@ -64,11 +66,10 @@ public class PostController {
 
     @GetMapping
     public List<GetPostMediaResponse> getPostList(
-            @RequestParam(required = false,defaultValue = "0",value="page") int pageNo,
-            @RequestParam(required = false,defaultValue = "createdAt",
-                    value = "criteria" ) String criteria
+            @PageableDefault(size = 10, sort = "createdAt", direction =
+                    Sort.Direction.DESC) Pageable pageable
     ) {
-        List<GetPostDto> posts = postService.getPosts(pageNo, criteria);
+        List<GetPostDto> posts = postService.getPosts(pageable);
         List<GetPostMediaResponse> responseList = new ArrayList<>();
 
         for(GetPostDto post : posts){
@@ -81,7 +82,7 @@ public class PostController {
                 response = response.fromExistMedia(post,
                         mediaInPost.getMediaInfos());
             }
-            System.out.println("response: "+response.getContent());
+            log.info("response: {}",response.getContent());
             responseList.add(response);
         }
 

@@ -1,5 +1,7 @@
 package com.example.owoonwan.config;
 
+import com.example.owoonwan.dto.dto.GetPostDto;
+import com.example.owoonwan.dto.dto.GetPostMediaDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +15,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.*;
 
 import java.time.Duration;
 
@@ -51,24 +51,19 @@ public class RedisCacheConfig {
     }
 
     @Bean
-    // standalone 인스턴스 생성, 해당 빈을 통해 레디스에 connection 가능
-    public RedisConnectionFactory redisConnectionFactory(){
-        RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
-        conf.setHostName(this.host);
-        conf.setPort(this.port);
-        conf.setPassword(this.password);
-        return new LettuceConnectionFactory(conf);
+    public RedisTemplate<String, GetPostDto> postDtoRedisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, GetPostDto> template = new RedisTemplate<>();
+        configureTemplate(template, factory, new Jackson2JsonRedisSerializer<>(GetPostDto.class));
+        return template;
     }
 
     @Bean
-    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory factory){
-        RedisTemplate<String,Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(factory);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.afterPropertiesSet();
+    public RedisTemplate<String, GetPostMediaDto> postMediaDtoRedisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, GetPostMediaDto> template = new RedisTemplate<>();
+        configureTemplate(template, factory, new Jackson2JsonRedisSerializer<>(GetPostMediaDto.class));
         return template;
     }
+
 
     @Bean
     public CommandLineRunner clearRedisCache(RedisConnectionFactory redisConnectionFactory) {
@@ -78,5 +73,14 @@ public class RedisCacheConfig {
             log.info("Redis cache has been cleared on application start for " +
                     "test");
         };
+    }
+
+    private void configureTemplate(RedisTemplate template,
+                                   RedisConnectionFactory factory,
+                                   RedisSerializer serializer) {
+        template.setConnectionFactory(factory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
+        template.afterPropertiesSet();
     }
 }

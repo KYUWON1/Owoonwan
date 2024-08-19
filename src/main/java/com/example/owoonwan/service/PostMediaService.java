@@ -31,7 +31,7 @@ import java.util.*;
 public class PostMediaService {
     private final PostMediaRepository postMediaRepository;
     private final S3Service s3Service;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String,GetPostMediaDto> redisTemplate;
 
     @Transactional
     public SavePostMediaDto savePostMedia(
@@ -45,8 +45,8 @@ public class PostMediaService {
     @Transactional
     public GetPostMediaDto getPostMedium(Long postId) {
         String cacheKey = "postMediaCache:" + postId;
-        ValueOperations<String,Object> valueOps = redisTemplate.opsForValue();
-        GetPostMediaDto cachedMedia = (GetPostMediaDto) valueOps.get(cacheKey);
+        ValueOperations<String,GetPostMediaDto> valueOps = redisTemplate.opsForValue();
+        GetPostMediaDto cachedMedia = valueOps.get(cacheKey);
 
         if(cachedMedia != null){
             redisTemplate.expire(cacheKey, Duration.ofMinutes(10));
@@ -60,11 +60,8 @@ public class PostMediaService {
                 postMediaRepository.findAllByPostId(postId);
 
         if(allMediaByPostId.isEmpty()){
-            GetPostMediaDto getPostMediaDto = GetPostMediaDto.builder()
-                    .postId(postId)
-                    .build();
-            valueOps.set(cacheKey,getPostMediaDto);
-            return getPostMediaDto;
+            log.info("No media found for post ID {}. Skipping cache.", postId);
+            return GetPostMediaDto.builder().postId(postId).build();
         }
 
         GetPostMediaDto getPostMediaDto = GetPostMediaDto.fromDomain(postId, allMediaByPostId);
@@ -84,7 +81,8 @@ public class PostMediaService {
                 s3Service.deleteFile(post.getUrl());
             }
         }
-        postMediaRepository.deleteAll(allByPostId);
+        //postMediaRepository.deleteAllInBatch(allByPostId);
+        postMediaRepository.deleteByPostId(postId);
 
         return deletePostMediaDto.builder()
                 .postId(postId)
@@ -119,9 +117,7 @@ public class PostMediaService {
 
     private void deleteRedisCache(Long postId){
         String cacheKey = "postMediaCache:" + postId;
-        if(redisTemplate.hasKey(cacheKey)){
-            redisTemplate.delete(cacheKey);
-        }
+        redisTemplate.delete(cacheKey);
     }
 
     private void putRedisCache(Long postId,List<PostMedia> updatedMediaList){

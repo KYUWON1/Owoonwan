@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PostService {
     private final PostRepository postRepository;
-    private final int PAGE_SIZE = 10;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, GetPostDto> redisTemplate;
 
     @Transactional
     public CreatePostDto createPost(String userId, String content) {
@@ -50,10 +49,10 @@ public class PostService {
     @Transactional
     public GetPostDto getPostDetail(Long postId) {
         String cacheKey = "postCache:" + postId;
-        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        ValueOperations<String, GetPostDto> valueOps = redisTemplate.opsForValue();
 
         // 캐시 검색
-        GetPostDto cachedPost = (GetPostDto) valueOps.get(cacheKey);
+        GetPostDto cachedPost = valueOps.get(cacheKey);
         if (cachedPost != null) {
             redisTemplate.expire(cacheKey,Duration.ofMinutes(10));
             log.info("Cache hit for post ID {}. TTL reset to 10 minutes.", postId);
@@ -72,10 +71,7 @@ public class PostService {
     }
 
     @Transactional
-    public List<GetPostDto> getPosts(int pageNo, String criteria) {
-        Pageable pageable = PageRequest.of(pageNo,PAGE_SIZE,
-                Sort.by(Sort.Direction.DESC,criteria));
-
+    public List<GetPostDto> getPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);
         if(posts.isEmpty()){
             throw new PostException(ErrorCode.ZERO_POST);
@@ -130,9 +126,7 @@ public class PostService {
 
     private void deleteRedisCache(Long postId){
         String cacheKey = "postCache:" + postId;
-        if(redisTemplate.hasKey(cacheKey)){
-            redisTemplate.delete(cacheKey);
-        }
+        redisTemplate.delete(cacheKey);
     }
 
     private void putRedisCache(Long postId,Post post){
