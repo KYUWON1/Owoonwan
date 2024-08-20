@@ -26,6 +26,14 @@ public class DataInitializer {
                 .phoneNumber("01012341234")
                 .role(UserRole.USER)
                 .build();
+        User user2 = User.builder()
+                .userId("test2")
+                .password(encodedPassword)
+                .nickName("nickName2")
+                .phoneNumber("01012341234")
+                .role(UserRole.USER)
+                .build();
         userRepository.save(user);
+        userRepository.save(user2);
     }
 }

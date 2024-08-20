@@ -4,6 +4,7 @@ import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.dto.CreateCommentDto;
 import com.example.owoonwan.dto.dto.GetPostCommentDto;
 import com.example.owoonwan.dto.response.CreateComment;
+import com.example.owoonwan.dto.response.DeletePostCommentResponse;
 import com.example.owoonwan.dto.response.GetCommentResponse;
 import com.example.owoonwan.service.CommentService;
 import com.example.owoonwan.utils.UserIdHolder;
@@ -44,4 +45,14 @@ public class CommentController {
                 .map(GetCommentResponse::from)
                 .collect(Collectors.toList());
     }
+
+    @DeleteMapping
+    public DeletePostCommentResponse deletePostComments(
+            @PathVariable Long postId,
+            @RequestParam Long commentId
+    ){
+        return DeletePostCommentResponse
+                .from(commentService.deletePostComment(postId,UserIdHolder.getUserIdFromToken(),commentId));
+    }
+
 }

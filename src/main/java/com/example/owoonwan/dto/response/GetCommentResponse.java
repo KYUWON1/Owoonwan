@@ -13,12 +13,14 @@ import java.util.Date;
 @Builder
 public class GetCommentResponse {
     private String userId;
+    private Long commentId;
     private String content;
     private Date createdAt;
 
     public static GetCommentResponse from(GetPostCommentDto post){
         return GetCommentResponse.builder()
                 .userId(post.getUserId())
+                .commentId(post.getCommentId())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .build();
