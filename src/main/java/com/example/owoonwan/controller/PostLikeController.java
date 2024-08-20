@@ -1,11 +1,16 @@
 package com.example.owoonwan.controller;
 
+import com.example.owoonwan.dto.dto.GetPostLikeInfoDto;
 import com.example.owoonwan.dto.response.CreateLikeAndCancelResponse;
+import com.example.owoonwan.dto.response.GetPostLikeInfoResponse;
 import com.example.owoonwan.service.PostLikeService;
 import com.example.owoonwan.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +29,13 @@ public class PostLikeController {
     @GetMapping
     public Long getPostLikeCount(@PathVariable Long postId){
         return postLikeService.getLikeCount(postId);
+    }
+
+    @GetMapping("/info")
+    public List<GetPostLikeInfoResponse> getPostLikeInfo(@PathVariable Long postId){
+        return postLikeService.getPostLikeInfo(postId).stream()
+                .map(GetPostLikeInfoResponse::from)
+                .collect(Collectors.toList());
+
     }
 }
