@@ -3,6 +3,7 @@ package com.example.owoonwan.controller;
 import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.dto.CreateCommentDto;
 import com.example.owoonwan.dto.dto.GetPostCommentDto;
+import com.example.owoonwan.dto.dto.UpdatePostComment;
 import com.example.owoonwan.dto.response.CreateComment;
 import com.example.owoonwan.dto.response.DeletePostCommentResponse;
 import com.example.owoonwan.dto.response.GetCommentResponse;
@@ -53,6 +54,16 @@ public class CommentController {
     ){
         return DeletePostCommentResponse
                 .from(commentService.deletePostComment(postId,UserIdHolder.getUserIdFromToken(),commentId));
+    }
+
+    @PatchMapping
+    public UpdatePostComment.Response updatePostComments(
+            @PathVariable Long postId,
+            @RequestBody UpdatePostComment.Request request
+    ){
+        return UpdatePostComment.Response
+                .from(commentService.updatePostComment(request,
+                        UserIdHolder.getUserIdFromToken(),postId));
     }
 
 }
