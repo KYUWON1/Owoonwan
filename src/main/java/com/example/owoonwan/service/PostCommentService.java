@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class PostCommentService {
 
     private final PostCommentRepository postCommentRepository;
     private final PostRepository postRepository;

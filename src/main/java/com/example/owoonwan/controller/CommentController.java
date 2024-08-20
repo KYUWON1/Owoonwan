@@ -1,13 +1,10 @@
 package com.example.owoonwan.controller;
 
-import com.example.owoonwan.domain.User;
-import com.example.owoonwan.dto.dto.CreateCommentDto;
-import com.example.owoonwan.dto.dto.GetPostCommentDto;
 import com.example.owoonwan.dto.dto.UpdatePostComment;
 import com.example.owoonwan.dto.response.CreateComment;
 import com.example.owoonwan.dto.response.DeletePostCommentResponse;
 import com.example.owoonwan.dto.response.GetCommentResponse;
-import com.example.owoonwan.service.CommentService;
+import com.example.owoonwan.service.PostCommentService;
 import com.example.owoonwan.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping ("/api/v1/posts/{postId}/comments")
 @Slf4j
 public class CommentController {
-    private final CommentService commentService;
+    private final PostCommentService postCommentService;
 
     @PostMapping
     public CreateComment.Response createComments(
@@ -33,7 +30,7 @@ public class CommentController {
     ){
         request.setUserId(UserIdHolder.getUserIdFromToken());
         request.setPostId(postId);
-        return CreateComment.Response.from(commentService.createComment(request));
+        return CreateComment.Response.from(postCommentService.createComment(request));
     }
 
     @GetMapping
@@ -42,7 +39,7 @@ public class CommentController {
             @PageableDefault(size = 10, sort = "createdAt", direction =
                     Sort.Direction.DESC) Pageable pageable
     ){
-        return commentService.getPostComment(postId, pageable).stream()
+        return postCommentService.getPostComment(postId, pageable).stream()
                 .map(GetCommentResponse::from)
                 .collect(Collectors.toList());
     }
@@ -53,7 +50,7 @@ public class CommentController {
             @RequestParam Long commentId
     ){
         return DeletePostCommentResponse
-                .from(commentService.deletePostComment(postId,UserIdHolder.getUserIdFromToken(),commentId));
+                .from(postCommentService.deletePostComment(postId,UserIdHolder.getUserIdFromToken(),commentId));
     }
 
     @PatchMapping
@@ -62,7 +59,7 @@ public class CommentController {
             @RequestBody UpdatePostComment.Request request
     ){
         return UpdatePostComment.Response
-                .from(commentService.updatePostComment(request,
+                .from(postCommentService.updatePostComment(request,
                         UserIdHolder.getUserIdFromToken(),postId));
     }
 
