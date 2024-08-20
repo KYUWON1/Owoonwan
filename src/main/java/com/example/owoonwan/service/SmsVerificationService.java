@@ -1,13 +1,12 @@
 package com.example.owoonwan.service;
 
 import com.example.owoonwan.domain.User;
-import com.example.owoonwan.dto.SmsVerificationDto;
+import com.example.owoonwan.dto.dto.SmsVerificationDto;
 import com.example.owoonwan.exception.VerifyException;
-import com.example.owoonwan.repository.UserRepository;
+import com.example.owoonwan.repository.jpa.UserRepository;
 import com.example.owoonwan.type.ErrorCode;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

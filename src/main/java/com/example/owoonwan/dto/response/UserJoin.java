@@ -1,6 +1,6 @@
 package com.example.owoonwan.dto.response;
 
-import com.example.owoonwan.dto.UserJoinDto;
+import com.example.owoonwan.dto.dto.UserJoinDto;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 

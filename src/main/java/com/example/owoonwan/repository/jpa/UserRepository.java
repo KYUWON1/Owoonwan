@@ -1,4 +1,4 @@
-package com.example.owoonwan.repository;
+package com.example.owoonwan.repository.jpa;
 
 import com.example.owoonwan.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

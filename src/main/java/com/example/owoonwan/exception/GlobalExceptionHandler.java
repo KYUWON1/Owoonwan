@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(CommentException.class)
+    public ErrorResponse handleUserException(CommentException e){
+        log.error("Comment exception {} is occurred.");
+        return new ErrorResponse(e.getErrorCode(),e.getDescription());
+    }
+
     @ExceptionHandler(MediaException.class)
     public ErrorResponse handleUserException(MediaException e){
         log.error("Media exception {} is occurred.");

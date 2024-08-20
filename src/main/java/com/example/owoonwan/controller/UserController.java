@@ -1,7 +1,7 @@
 package com.example.owoonwan.controller;
 
 import com.example.owoonwan.dto.response.*;
-import com.example.owoonwan.dto.UserInfoDto;
+import com.example.owoonwan.dto.dto.UserInfoDto;
 import com.example.owoonwan.exception.VerifyException;
 import com.example.owoonwan.service.SmsVerificationService;
 import com.example.owoonwan.type.ErrorCode;
@@ -15,12 +15,13 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
     private final SmsVerificationService smsVerificationService;
 
-    @PostMapping("/user/submit-form")
+    @PostMapping("/submit-form")
     public UserJoin.Response submitUserForm(
             HttpSession session,
            @RequestBody @Valid UserJoin.Request request
@@ -30,7 +31,7 @@ public class UserController {
                 ,"successfully send verifyCode.");
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     public SmsVerification.Response verifyAndSaveUser(
             HttpSession session,
             @RequestBody @Valid SmsVerification.Request request
@@ -40,7 +41,7 @@ public class UserController {
         ,"successfully save User");
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public UserInfoDto getUserInfo(
             @PathVariable String userId
     ) {
@@ -53,14 +54,14 @@ public class UserController {
     }
 
     // deleteAt 컬럼 제거하기
-    @DeleteMapping("/user/{userId}")
+    @DeleteMapping("/{userId}")
     public DeleteUser deleteUser(
             @PathVariable String userId
     ) {
         return userService.deleteUser(userId);
     }
 
-    @PatchMapping("/user/{userId}/info")
+    @PatchMapping("/{userId}/info")
     public UpdateUserIdAndNickName.Response updateUser(
         @PathVariable String userId,
         @RequestBody UpdateUserIdAndNickName.Request request
@@ -68,7 +69,7 @@ public class UserController {
         return userService.updateUserIdAndNickName(userId,request);
     }
 
-    @PatchMapping("/user/{userId}/password")
+    @PatchMapping("/{userId}/password")
     public UpdateUserPassword.Response updateUser(
             @PathVariable String userId,
             @RequestBody UpdateUserPassword.Request request

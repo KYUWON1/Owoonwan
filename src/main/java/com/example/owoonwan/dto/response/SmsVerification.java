@@ -1,6 +1,6 @@
 package com.example.owoonwan.dto.response;
 
-import com.example.owoonwan.dto.SmsVerificationDto;
+import com.example.owoonwan.dto.dto.SmsVerificationDto;
 import lombok.*;
 
 public class SmsVerification {

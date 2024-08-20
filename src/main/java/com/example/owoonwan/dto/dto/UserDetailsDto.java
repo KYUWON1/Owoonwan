@@ -1,14 +1,19 @@
-package com.example.owoonwan.dto;
+package com.example.owoonwan.dto.dto;
 
 import com.example.owoonwan.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
+@Getter
+@Setter
 public class UserDetailsDto implements UserDetails {
 
     private final UserDto user;
