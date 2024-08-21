@@ -22,7 +22,7 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-  "userId": "test2",
+  "userId": "test",
   "password": "1234"
 }
 

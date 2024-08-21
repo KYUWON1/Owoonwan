@@ -14,7 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name="posts")
+@Table(name="workout_group")
 @EntityListeners(AuditingEntityListener.class)
 public class WorkOutGroup {
     @Id
@@ -25,7 +25,7 @@ public class WorkOutGroup {
     private String ownerId;
 
     @NotNull
-    private Long maxMemberCount;
+    private Long maxMember;
 
     private String title;
     private String description;
@@ -37,5 +37,6 @@ public class WorkOutGroup {
     @LastModifiedDate
     private Date updatedAt;
 
+    @Enumerated(EnumType.STRING)
     private GroupStatus status;
 }
