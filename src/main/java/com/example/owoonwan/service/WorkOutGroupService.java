@@ -105,6 +105,24 @@ public class WorkOutGroupService {
                 .build();
     }
 
+    @Transactional
+    public DeleteWorkOutGroupDto deleteWorkOutGroup(Long groupId,
+                                                    String userId) {
+        WorkOutGroup group = workOutGroupRepository.findById(groupId)
+                .orElseThrow(() -> new WorkOutGroupException(ErrorCode.GROUP_NOT_FOUND));
+        if(!group.getOwnerId().equals(userId)){
+            throw new WorkOutGroupException(ErrorCode.USER_INFO_UN_MATCH);
+        }
+        getGroupIdLockAndDelete(group);
+        workOutGroupMemberRepository.deleteByGroupId(groupId);
+        return new DeleteWorkOutGroupDto(groupId);
+    }
+
+    @GroupLock
+    private void getGroupIdLockAndDelete(WorkOutGroup group){
+        workOutGroupRepository.delete(group);
+    }
+
     @GroupLock
     private WorkOutGroup getGroupIdLockAndLeave(WorkOutGroup group){
         group.setMemberCount(group.getMemberCount() - 1);

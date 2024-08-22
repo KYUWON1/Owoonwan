@@ -2,10 +2,7 @@ package com.example.owoonwan.controller;
 
 import com.example.owoonwan.dto.dto.GetWorkOutListDto;
 import com.example.owoonwan.dto.dto.LeaveWorkOutGroupDto;
-import com.example.owoonwan.dto.response.CreateWorkOutGroup;
-import com.example.owoonwan.dto.response.JoinWorkOutResponse;
-import com.example.owoonwan.dto.response.LeaveWorkOutGroupResponse;
-import com.example.owoonwan.dto.response.UpdateWorkOutGroup;
+import com.example.owoonwan.dto.response.*;
 import com.example.owoonwan.service.WorkOutGroupService;
 import com.example.owoonwan.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +36,14 @@ public class WorkOutGroupController {
                 UserIdHolder.getUserIdFromToken(),
                 request
         ));
+    }
+
+    @DeleteMapping("/{groupId}")
+    public DeleteWorkOutGroupResponse deleteWorkOutGroup(
+            @PathVariable Long groupId
+    ){
+        return DeleteWorkOutGroupResponse.from(workOutGroupService.deleteWorkOutGroup(groupId,
+                UserIdHolder.getUserIdFromToken()));
     }
 
     @GetMapping("/{groupId}")
