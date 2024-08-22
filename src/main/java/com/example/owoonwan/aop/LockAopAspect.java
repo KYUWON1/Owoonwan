@@ -23,7 +23,7 @@ public class LockAopAspect {
     private final RedissonClient redissonClient;
 
     @Around("@annotation(lock) && args(groupId,..)")
-    public Object aroundMethod(ProceedingJoinPoint pjp, GroupJoinLock lock, Long groupId) throws Throwable {
+    public Object aroundMethod(ProceedingJoinPoint pjp, GroupLock lock, Long groupId) throws Throwable {
         String lockKey = "workout_group_join_lock_" + groupId;
         RLock rLock = redissonClient.getLock(lockKey);
         boolean isLocked = false;

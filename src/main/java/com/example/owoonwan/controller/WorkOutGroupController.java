@@ -1,12 +1,9 @@
 package com.example.owoonwan.controller;
 
-import com.example.owoonwan.aop.GroupJoinLock;
-import com.example.owoonwan.dto.dto.CreateWorkOutDto;
 import com.example.owoonwan.dto.dto.GetWorkOutListDto;
-import com.example.owoonwan.dto.dto.JoinWorkOutGroupDto;
 import com.example.owoonwan.dto.response.CreateWorkOutGroup;
-import com.example.owoonwan.dto.response.GetWorkOutListResponse;
 import com.example.owoonwan.dto.response.JoinWorkOutResponse;
+import com.example.owoonwan.dto.response.UpdateWorkOutGroup;
 import com.example.owoonwan.service.WorkOutGroupService;
 import com.example.owoonwan.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +19,24 @@ import java.util.List;
 public class WorkOutGroupController {
     private final WorkOutGroupService workOutGroupService;
 
-
     @PostMapping
     public CreateWorkOutGroup.Response createWorkOutGroup(
             @RequestBody CreateWorkOutGroup.Request request
     ){
         return CreateWorkOutGroup.Response.from(workOutGroupService.createWorkOutGroup(request,
                 UserIdHolder.getUserIdFromToken()));
+    }
+
+    @PatchMapping("/{groupId}")
+    public UpdateWorkOutGroup.Response updateWorkOutGroup(
+            @PathVariable Long groupId,
+            @RequestBody UpdateWorkOutGroup.Request request
+    ){
+        return UpdateWorkOutGroup.Response.from(workOutGroupService.updateWorkOutGroup(
+                groupId,
+                UserIdHolder.getUserIdFromToken(),
+                request
+        ));
     }
 
     @GetMapping("/{groupId}")

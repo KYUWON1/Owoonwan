@@ -6,6 +6,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface GroupJoinLock {
+public @interface GroupLock {
     long tryLockTime() default 3000;
 }
