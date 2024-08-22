@@ -2,6 +2,7 @@ package com.example.owoonwan.exception;
 
 import com.example.owoonwan.dto.response.ErrorResponse;
 import com.example.owoonwan.type.ErrorCode;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ExpiredJwtException> handleExpiredJwtException(ExpiredJwtException e) {
+        log.error("ExpiredJwtException exception {} is occurred.", e.getMessage());
+        return new ResponseEntity<>(e, HttpStatus.CONFLICT);  // 상태 코드 설정
+    }
 
     @ExceptionHandler(RedissonException.class)
     public ResponseEntity<ErrorResponse> handleRedissonException(RedissonException e) {
