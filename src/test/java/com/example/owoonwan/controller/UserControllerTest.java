@@ -138,7 +138,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization","Bearer "+ token)
                         .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("USER_INFO_UN_MATCH"));
     }
 

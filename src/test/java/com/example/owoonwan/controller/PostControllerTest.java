@@ -145,7 +145,7 @@ class PostControllerTest {
                         .param("content", "test post content") // Use param to send text data
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("FILE_EXTENSION_UNKNOWN"))
                 .andExpect(jsonPath("$.errorMessage").value(ErrorCode.FILE_EXTENSION_UNKNOWN.getDescription()));
     }
@@ -174,7 +174,7 @@ class PostControllerTest {
         files.forEach(file -> builder.file(file));
         builder.file(content);
         mockMvc.perform(builder.with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("MAX_POST_SIZE_10"))
                 .andExpect(jsonPath("$.errorMessage").value(ErrorCode.MAX_POST_SIZE_10.getDescription()));
     }
@@ -205,7 +205,7 @@ class PostControllerTest {
                         .file((content))
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("S3_PUT_EXCEPTION"))
                 .andExpect(jsonPath("$.errorMessage").value(ErrorCode.S3_PUT_EXCEPTION.getDescription()));
     }
@@ -475,7 +475,7 @@ class PostControllerTest {
                             return request;
                         })
                 .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("MAX_POST_SIZE_10"))
                 .andExpect(jsonPath("$.errorMessage").value(ErrorCode.MAX_POST_SIZE_10.getDescription()));
     }
@@ -501,7 +501,7 @@ class PostControllerTest {
                             return request;
                         })
                         .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("FILE_EXTENSION_UNKNOWN"))
                 .andExpect(jsonPath("$.errorMessage").value(ErrorCode.FILE_EXTENSION_UNKNOWN.getDescription()));
     }
@@ -536,7 +536,7 @@ class PostControllerTest {
                             return request;
                         })
                         .with(csrf()))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("S3_PUT_EXCEPTION"))
                 .andExpect(jsonPath("$.errorMessage").value(ErrorCode.S3_PUT_EXCEPTION.getDescription()));
     }
