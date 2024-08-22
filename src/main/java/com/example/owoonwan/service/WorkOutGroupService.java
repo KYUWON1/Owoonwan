@@ -7,12 +7,14 @@ import com.example.owoonwan.repository.jpa.WorkOutGroupRepository;
 import com.example.owoonwan.type.GroupStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class WorkOutGroupService {
     private final WorkOutGroupRepository workOutGroupRepository;
+    private final RedissonClient redissonClient;
 
     @Transactional
     public CreateWorkOutDto createWorkOutGroup(
@@ -28,4 +30,7 @@ public class WorkOutGroupService {
 
         return CreateWorkOutDto.fromDomain(workOutGroupRepository.save(group));
     }
+
+    @Transactional
+
 }

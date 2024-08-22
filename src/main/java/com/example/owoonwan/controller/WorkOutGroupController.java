@@ -25,4 +25,6 @@ public class WorkOutGroupController {
         return CreateWorkOutGroup.Response.from(workOutGroupService.createWorkOutGroup(request,
                 UserIdHolder.getUserIdFromToken()));
     }
+
+
 }
