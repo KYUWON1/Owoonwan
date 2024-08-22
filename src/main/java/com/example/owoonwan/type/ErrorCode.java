@@ -23,6 +23,10 @@ public enum ErrorCode {
     FILE_EXTENSION_UNKNOWN("지원하지않는 파일 형식입니다."),
     FILE_IS_EMPTY("파일이 비어있습니다. 요청에서 제거해주세요"),
     S3_PUT_EXCEPTION("파일을 저장하는중 에러가 발생했습니다."),
+    GROUP_NOT_FOUND("해당 모임은 존재하지 않습니다."),
+    GROUP_IS_FULL("해당 모임은 정원이 꽉 찼습니다."),
+    FAIL_LOCK_ACQUIRE("락 획득에서 문제가 발생했습니다."),
+    INTERRUPT_OCCUR("락 획득중 인터럽트가 발생했습니다."),
     PASSWORD_DOUBLE_CHECK_UN_MATCH("확인 비밀번호가 일치하지 않습니다."),
     POST_NOT_FOUND("해당 게시물은 존재하지않습니다."),
     ZERO_POST("게시글이 존재하지 않습니다.");

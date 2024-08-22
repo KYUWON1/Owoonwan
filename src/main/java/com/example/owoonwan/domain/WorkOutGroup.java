@@ -27,6 +27,8 @@ public class WorkOutGroup {
     @NotNull
     private Long maxMember;
 
+    private Long memberCount = 0L;
+
     private String title;
     private String description;
 

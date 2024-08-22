@@ -10,20 +10,32 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RedissonException.class)
+    public ErrorResponse handleRedissonException(RedissonException e){
+        log.error("RedissonException exception {} is occurred.");
+        return new ErrorResponse(e.getErrorCode(),e.getDescription());
+    }
+
+    @ExceptionHandler(WorkOutGroupException.class)
+    public ErrorResponse handleWorkOutGroupException(WorkOutGroupException e){
+        log.error("WorkOutGroup exception {} is occurred.");
+        return new ErrorResponse(e.getErrorCode(),e.getDescription());
+    }
+
     @ExceptionHandler(CommentException.class)
-    public ErrorResponse handleUserException(CommentException e){
+    public ErrorResponse handleCommentException(CommentException e){
         log.error("Comment exception {} is occurred.");
         return new ErrorResponse(e.getErrorCode(),e.getDescription());
     }
 
     @ExceptionHandler(MediaException.class)
-    public ErrorResponse handleUserException(MediaException e){
+    public ErrorResponse handleMediaException(MediaException e){
         log.error("Media exception {} is occurred.");
         return new ErrorResponse(e.getErrorCode(),e.getDescription());
     }
 
     @ExceptionHandler(PostException.class)
-    public ErrorResponse handleUserException(PostException e){
+    public ErrorResponse handlePostException(PostException e){
         log.error("Post exception {} is occurred.");
         return new ErrorResponse(e.getErrorCode(),e.getDescription());
     }
