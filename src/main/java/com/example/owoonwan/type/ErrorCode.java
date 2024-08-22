@@ -19,6 +19,7 @@ public enum ErrorCode {
     MAX_POST_SIZE_10("최대 10개의 파일만 등록 가능합니다."),
     PASSWORD_UN_MATCH("비밀번호가 일치하지 않습니다."),
     COMMENT_NOT_EXIST("해당 댓글은 존재하지않습니다."),
+    USER_NOT_EXIST_IN_GROUP("해당 그룹에는 유저가 존재하지않습니다."),
     FILE_EXTENSION_NOT_EXIST("확장자명이 존재하지 않습니다."),
     FILE_EXTENSION_UNKNOWN("지원하지않는 파일 형식입니다."),
     FILE_IS_EMPTY("파일이 비어있습니다. 요청에서 제거해주세요"),

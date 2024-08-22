@@ -3,10 +3,7 @@ package com.example.owoonwan.service;
 import com.example.owoonwan.aop.GroupLock;
 import com.example.owoonwan.domain.WorkOutGroup;
 import com.example.owoonwan.domain.WorkOutGroupMember;
-import com.example.owoonwan.dto.dto.CreateWorkOutDto;
-import com.example.owoonwan.dto.dto.GetWorkOutListDto;
-import com.example.owoonwan.dto.dto.JoinWorkOutGroupDto;
-import com.example.owoonwan.dto.dto.UpdateWorkOutGroupDto;
+import com.example.owoonwan.dto.dto.*;
 import com.example.owoonwan.dto.response.CreateWorkOutGroup;
 import com.example.owoonwan.dto.response.UpdateWorkOutGroup;
 import com.example.owoonwan.exception.WorkOutGroupException;
@@ -21,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -91,6 +89,31 @@ public class WorkOutGroupService {
         return UpdateWorkOutGroupDto.fromDomain(workOutGroupRepository.save(updatedGroup));
     }
 
+    @Transactional
+    public LeaveWorkOutGroupDto leaveWorkOutGroup(Long groupId, String userId) {
+        WorkOutGroup group = workOutGroupRepository.findById(groupId)
+                .orElseThrow(()-> new WorkOutGroupException(ErrorCode.GROUP_NOT_FOUND));
+        WorkOutGroupMember member =
+                workOutGroupMemberRepository.findByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new WorkOutGroupException(ErrorCode.USER_NOT_EXIST_IN_GROUP));
+        WorkOutGroup updatedGroup = getGroupIdLockAndLeave(group);
+        workOutGroupRepository.save(updatedGroup);
+        workOutGroupMemberRepository.delete(member);
+        return LeaveWorkOutGroupDto.builder()
+                .groupId(groupId)
+                .userId(userId)
+                .build();
+    }
+
+    @GroupLock
+    private WorkOutGroup getGroupIdLockAndLeave(WorkOutGroup group){
+        group.setMemberCount(group.getMemberCount() - 1);
+        if(group.getStatus().equals(GroupStatus.FULL)){
+            group.setStatus(GroupStatus.POSSIBLE);
+        }
+        return group;
+    }
+
     @GroupLock
     private WorkOutGroup getGroupIdLockAndUpdate(
             WorkOutGroup group
@@ -116,7 +139,11 @@ public class WorkOutGroupService {
     @GroupLock
     private JoinWorkOutGroupDto getGroupIdLockAndJoin(Long groupId,
                                                 WorkOutGroup group,String userId){
-
+        Optional<WorkOutGroupMember> existMember =
+                workOutGroupMemberRepository.findByGroupIdAndUserId(groupId, userId);
+        if(existMember.isPresent()){
+            throw new WorkOutGroupException(ErrorCode.USER_ID_EXIST);
+        }
         // status 를 확인할때, 상호배제 필요
         if(group.getStatus().equals(GroupStatus.FULL)){
             throw new WorkOutGroupException(ErrorCode.GROUP_IS_FULL);
@@ -142,4 +169,6 @@ public class WorkOutGroupService {
 
         return result;
     }
+
+
 }
