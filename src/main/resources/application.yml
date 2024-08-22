@@ -23,6 +23,11 @@ spring:
       port: 6379
       host: localhost
       password: tlarb3011
+redisson:
+  config:
+    singleServerConfig:
+      address: "redis://localhost:6379"
+      password: tlarb3011
 jwt:
   secret: rjsrnreogkrrytlarbdnjsdlqslekrkatkgkqslekaaavvvvvvrlrlrldjfuqwl
 cloud:
