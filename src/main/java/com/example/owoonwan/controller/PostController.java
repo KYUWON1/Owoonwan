@@ -11,6 +11,9 @@ import com.example.owoonwan.service.PostMediaService;
 import com.example.owoonwan.service.PostService;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.utils.UserIdHolder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -27,15 +30,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
 @Slf4j
+@Tag(name = "Post API", description = "게시물 관리 API")
 public class PostController {
     private final PostService postService;
     private final PostMediaService postMediaService;
     private final static Long MAX_FILE_COUNT = 10L;
 
     @PostMapping
+    @Operation(summary = "게시물 생성", description = "새로운 게시물을 생성합니다. " +
+            "미디어 파일과 게시글을 첨부할 수 있습니다.")
     public CreatePostResponse createPost(
-            @RequestPart(required = false) List<MultipartFile> files,
-            @RequestPart String content
+            @Parameter(description = "첨부할 미디어 파일 목록") @RequestPart(required = false) List<MultipartFile> files,
+            @Parameter(description = "게시물 내용") @RequestPart String content
     ) {
         if(files != null && !files.isEmpty()){
             checkFileExtension(files);
@@ -61,13 +67,29 @@ public class PostController {
             throw new PostException(ErrorCode.S3_PUT_EXCEPTION);
         }
 
-        return CreatePostResponse.from(post,media);
+        return CreatePostResponse.from(post, media);
+    }
+
+    @GetMapping("/{postId}")
+    @Operation(summary = "게시물 상세 조회", description = "특정 게시물의 상세 정보를 조회합니다.")
+    public GetPostMediaResponse getPostDetail(
+            @Parameter(description = "게시글 ID") @PathVariable Long postId
+    ) {
+        GetPostDto post = postService.getPostDetail(postId);
+        GetPostMediaDto medium = postMediaService.getPostMedium(post.getPostId());
+
+        // 미디어 파일 없을시
+        if (medium.getMediaInfos() == null || medium.getMediaInfos().isEmpty()) {
+            return GetPostMediaResponse.fromNoMedia(post);
+        }
+        // 미디어 파일 존재시
+        return GetPostMediaResponse.fromExistMedia(post, medium.getMediaInfos());
     }
 
     @GetMapping
+    @Operation(summary = "게시물 목록 조회", description = "게시물 목록을 페이징하여 조회합니다.")
     public List<GetPostMediaResponse> getPostList(
-            @PageableDefault(size = 10, sort = "createdAt", direction =
-                    Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         List<GetPostDto> posts = postService.getPosts(pageable);
         List<GetPostMediaResponse> responseList = new ArrayList<>();
@@ -79,36 +101,21 @@ public class PostController {
             if(mediaInPost.getMediaInfos() == null || mediaInPost.getMediaInfos().isEmpty()){
                 response = response.fromNoMedia(post);
             }else{
-                response = response.fromExistMedia(post,
-                        mediaInPost.getMediaInfos());
+                response = response.fromExistMedia(post, mediaInPost.getMediaInfos());
             }
-            log.info("response: {}",response.getContent());
+            log.info("response: {}", response.getContent());
             responseList.add(response);
         }
 
         return responseList;
     }
 
-    @GetMapping("/{postId}")
-    public GetPostMediaResponse getPostDetail(
-            @PathVariable Long postId
-    ) {
-        GetPostDto post = postService.getPostDetail(postId);
-        GetPostMediaDto medium =
-                postMediaService.getPostMedium(post.getPostId());
-        // 미디어 파일 없을시
-        if(medium.getMediaInfos() == null || medium.getMediaInfos().isEmpty()){
-            return GetPostMediaResponse.fromNoMedia(post);
-        }
-        // 미디어 파일 존재시
-        return GetPostMediaResponse.fromExistMedia(post,medium.getMediaInfos());
-    }
-
     @PatchMapping("/{postId}")
+    @Operation(summary = "게시물 수정", description = "기존 게시물의 내용을 수정하고 미디어 파일을 변경할 수 있습니다.")
     public UpdatePostResponse updatePost(
-            @PathVariable Long postId,
-            @RequestPart(required = false) List<MultipartFile> files,
-            @RequestPart String content
+            @Parameter(description = "게시글 ID") @PathVariable Long postId,
+            @Parameter(description = "새로 첨부할 미디어 파일 목록") @RequestPart(required = false) List<MultipartFile> files,
+            @Parameter(description = "수정된 게시물 내용") @RequestPart String content
     ){
         if(files != null && !files.isEmpty()){
             checkFileExtension(files);
@@ -134,20 +141,20 @@ public class PostController {
             throw new PostException(ErrorCode.S3_PUT_EXCEPTION);
         }
 
-        return UpdatePostResponse.from(post,media);
+        return UpdatePostResponse.from(post, media);
     }
 
     @DeleteMapping("/{postId}")
+    @Operation(summary = "게시물 삭제", description = "특정 게시물을 삭제합니다.")
     public DeletePostResponse deletePost(
-            @PathVariable Long postId
+            @Parameter(description = "게시글 ID") @PathVariable Long postId
     ){
         String userId = UserIdHolder.getUserIdFromToken();
         DeletePostDto deletePostDto = postService.deletePost(postId, userId);
         postMediaService.deletePostMedia(postId);
 
-        return DeletePostResponse.from(deletePostDto,userId);
+        return DeletePostResponse.from(deletePostDto, userId);
     }
-
 
     private void checkFileExtension(List<MultipartFile> files){
         for(MultipartFile file : files){
@@ -171,6 +178,4 @@ public class PostController {
             "mp4", "avi", "mkv", "mov", "wmv", "flv", "webm", "mpeg", "mpg", "3gp",
             "ogg", "m4v", "asf", "vob", "rmvb"
     );
-
 }
-

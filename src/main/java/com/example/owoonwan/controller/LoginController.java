@@ -5,6 +5,10 @@ import com.example.owoonwan.dto.response.ErrorResponse;
 import com.example.owoonwan.dto.response.UserLogin;
 import com.example.owoonwan.jwt.JwtUtil;
 import com.example.owoonwan.type.ErrorCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +24,7 @@ public class LoginController {
     private final JwtUtil jwtUtil;
     private final Long expiredMs = 10 * 60 * 60 * 1000L;
 
-//    // 에러 객체를 전달해야 에러가 발생하지않음
+    //    // 에러 객체를 전달해야 에러가 발생하지않음
 //    @PostMapping("/login")
 //    public ResponseEntity<?> login(
 //            @RequestBody UserLogin.Request request
@@ -50,14 +54,21 @@ public class LoginController {
 //    }
 
     @GetMapping("/user/me")
-    public ResponseEntity<?> getUserDetails(Authentication authentication) {
+    @Operation(summary = "현재 사용자 정보 조회", description = "인증된 사용자의 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<?> getUserDetails(
+            @Parameter(description = "현재 인증된 사용자 정보") Authentication authentication) {
         try {
             UserDetailsDto customUserDetails = (UserDetailsDto) authentication.getPrincipal();
             String userId = customUserDetails.getUsername();
             String role = customUserDetails.getAuthorities().iterator().next().getAuthority();
             return ResponseEntity.ok(UserLogin.Response.builder()
                     .userId(userId)
-                    .description("Role :"+ role)
+                    .description("Role: " + role)
                     .build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
