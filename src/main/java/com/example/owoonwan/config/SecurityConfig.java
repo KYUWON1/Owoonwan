@@ -40,13 +40,15 @@ public class SecurityConfig {
         AuthenticationManager authManager =
                 authenticationManager(authenticationConfiguration);
         LoginFilter loginFilter = new LoginFilter(authManager,jwtUtil);
-        loginFilter.setFilterProcessesUrl("/login");
+        loginFilter.setFilterProcessesUrl("/api/v1/user/login");
 
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/submit-form", "/user/register",
-                                "/h2-console/**","/login").permitAll()
+                        .requestMatchers("/api/v1/user/submit-form", "/api/v1" +
+                                        "/user" +
+                                        "/register",
+                                "/h2-console/**","/api/v1/user/login").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
