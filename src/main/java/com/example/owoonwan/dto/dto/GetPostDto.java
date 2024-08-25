@@ -1,9 +1,8 @@
 package com.example.owoonwan.dto.dto;
 
 import com.example.owoonwan.domain.Post;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Date;
 
@@ -11,15 +10,23 @@ import java.util.Date;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor // 기본생성자 오류, 문제해결
+@NoArgsConstructor
+@Schema(description = "게시글 조회 DTO")
 public class GetPostDto {
+
+    @Schema(description = "게시글 작성자 ID", example = "user123")
     private String userId;
+
+    @Schema(description = "게시글 ID", example = "789")
     private Long postId;
 
+    @Schema(description = "게시글 내용", example = "This is a post content.")
     private String content;
+
+    @Schema(description = "게시글 수정 일자", example = "2024-08-25T10:15:30")
     private Date updatedAt;
 
-    public static GetPostDto FromEntity(Post post){
+    public static GetPostDto FromEntity(Post post) {
         return GetPostDto.builder()
                 .userId(post.getUserId())
                 .postId(post.getPostId())

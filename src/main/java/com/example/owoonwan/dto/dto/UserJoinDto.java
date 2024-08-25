@@ -1,6 +1,7 @@
 package com.example.owoonwan.dto.dto;
 
 import com.example.owoonwan.domain.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -8,8 +9,13 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "사용자 가입 DTO")
 public class UserJoinDto {
+
+    @Schema(description = "사용자 ID", example = "user123")
     private String userId;
+
+    @Schema(description = "닉네임", example = "JohnDoe")
     private String nickName;
 
     @Builder
