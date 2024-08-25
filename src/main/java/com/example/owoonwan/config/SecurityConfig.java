@@ -45,10 +45,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/user/submit-form", "/api/v1" +
-                                        "/user" +
-                                        "/register",
-                                "/h2-console/**","/api/v1/user/login").permitAll()
+                        .requestMatchers(
+                                "/api/v1/user/submit-form",
+                                "/api/v1/user/register",
+                                "/h2-console/**",
+                                "/api/v1/user/login",
+                                "/swagger-ui/**",              // Swagger UI 경로 허용
+                                "/v3/api-docs/**",            // OpenAPI 문서 경로 허용
+                                "/swagger-resources/**",      // Swagger 리소스 경로 허용
+                                "/webjars/**"                 // Swagger UI가 사용하는 웹 자르 경로 허용
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

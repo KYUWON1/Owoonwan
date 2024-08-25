@@ -1,5 +1,6 @@
 package com.example.owoonwan.service;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 import net.nurigo.sdk.message.model.Message;
@@ -20,6 +21,16 @@ public class SmsService {
             @Value("${SMS_API_SECRET}") String apiSecret,
             @Value("${SMS_PHONE_NUMBER}") String senderNumber
     ) {
+        Dotenv dotenv = Dotenv.load();
+        if(apiKey == null){
+            apiKey = dotenv.get("SMS_API_KEY");
+        }
+        if(apiSecret == null){
+            apiSecret = dotenv.get("SMS_API_SECRET");
+        }
+        if(senderNumber == null){
+            senderNumber = dotenv.get("SMS_PHONE_NUMBER");
+        }
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
         this.senderNumber = senderNumber;
