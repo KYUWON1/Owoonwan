@@ -15,21 +15,12 @@
   - 닉네임과 아이디는 고유해야한다.
   - coolsms 에서 제공하는 sms API를 활용.
   - HttpSession을 사용해서, 인증번호 확인.
-  ### 회원가입 API
-  > **POST**  `[/join/request]`<br>**기능 : 회원가입 요청**<br>
-  > **Content** : 
-  > `[{ id : 유저아이디 , password : 비밀번호 , nickname : 닉네임 , phoneNumber : 전화번호 }]`
-  > <br>**Response** : `[{ status : 200 , description : "sms 발송"}]`
-
-  > **POST**  `[/join/response]`<br>**기능 : 인증 및 회원등록**<br>
-  > **Content** :
-  > `[{ verifyCode : 인증번호 }]`
-  > <br>**Response** : `[{ status : 200 , description : "회원가입 완료"}]`
+  
 
 - 로그인 기능
     - 사용자의 ID와 Password를 통해서 로그인.
     - SpringSecurity 와 JWT를 통해서, 사용자 인증을 하고, 인증 토큰을 발급한다.
-    - 토큰을 증명해야 서비스에 접근할 수 있다.
+    - 모든 서비스는 Bearer 토큰을 증명해야 서비스에 접근할 수 있다.
 
 
 - 회원관리 기능
@@ -51,11 +42,11 @@
     - 게시글은 종류가 많을수 있으므로 paging 처리를 한다.
     - Redis의 Caching을 통해, 조회한 게시글에 대해 관리한다.
     - 한번 조회한 게시글은 캐시에 저장해놓고, 재조회시 빠르게 제공
-    - 캐싱된 게시글은 일정 시간이 지나면 사라지고, hit가 발생할때마다, 캐시에 저장되는 
+    - 캐싱된 게시글은 일정 시간이 지나면 사라지고, hit 가 발생할때마다, 캐시에 저장되는 
   시간을 늘려준다.
 
 
-- 특정 게시글 검색 기능
+- 특정 게시글 검색 기능 (미구현)
     - 닉네임 또는 관련 내용을 통해서, 게시글을 조회할 수 있다.
     - 조회되는 게시글은 많을 수 있으므로 paging처리를 한다.
     - 조회되는 게시글은 최신순으로 정렬되서 제공된다.
@@ -107,6 +98,12 @@
 # ERD
 
 ![ER diagram](image/ERD.png)
+
+# API 문서화
+
+### Swagger를 통한 API 문서화
+
+- **Swagger UI 경로:** `/swagger-ui/index.html`
 
 # Trouble Shooting
 
