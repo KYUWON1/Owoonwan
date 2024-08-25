@@ -1,11 +1,9 @@
 package com.example.owoonwan.controller;
 
-import com.example.owoonwan.domain.User;
 import com.example.owoonwan.dto.dto.*;
 import com.example.owoonwan.jwt.JwtUtil;
 import com.example.owoonwan.service.PostMediaService;
 import com.example.owoonwan.service.PostService;
-import com.example.owoonwan.service.UserService;
 import com.example.owoonwan.type.ErrorCode;
 import com.example.owoonwan.type.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,19 +15,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -214,8 +208,8 @@ class PostControllerTest {
     @DisplayName("success getPostList - 미디어 파일 존재시")
     void successGetPostListExistMedia() throws Exception {
         //given
-        List<GetPostDto> posts = new ArrayList<>();
-        posts.add(GetPostDto.builder()
+        List<PostDtoRedisTemplate> posts = new ArrayList<>();
+        posts.add(PostDtoRedisTemplate.builder()
                         .userId("testId")
                         .postId(1L)
                         .content("test content")
@@ -257,8 +251,8 @@ class PostControllerTest {
     @DisplayName("success getPostList - 미디어 파일 없을시")
     void successGetPostList() throws Exception {
         //given
-        List<GetPostDto> posts = new ArrayList<>();
-        posts.add(GetPostDto.builder()
+        List<PostDtoRedisTemplate> posts = new ArrayList<>();
+        posts.add(PostDtoRedisTemplate.builder()
                 .userId("testId")
                 .postId(1L)
                 .content("test content")
@@ -298,7 +292,7 @@ class PostControllerTest {
                 .build());
 
         given(postService.getPostDetail(anyLong()))
-                .willReturn(GetPostDto.builder()
+                .willReturn(PostDtoRedisTemplate.builder()
                         .userId("testId")
                         .postId(1L)
                         .content("test content")
@@ -329,7 +323,7 @@ class PostControllerTest {
     void successGetPostDetailNoMedia() throws Exception {
         //given
         given(postService.getPostDetail(anyLong()))
-                .willReturn(GetPostDto.builder()
+                .willReturn(PostDtoRedisTemplate.builder()
                         .userId("testId")
                         .postId(1L)
                         .content("test content")

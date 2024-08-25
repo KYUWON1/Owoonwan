@@ -1,6 +1,6 @@
 package com.example.owoonwan.dto.response;
 
-import com.example.owoonwan.dto.dto.GetPostDto;
+import com.example.owoonwan.dto.dto.PostDtoRedisTemplate;
 import com.example.owoonwan.dto.dto.GetPostMediaDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -30,7 +30,7 @@ public class GetPostMediaResponse {
     @Schema(description = "미디어 정보 리스트")
     private List<GetPostMediaDto.MediaInfo> mediaInfos;
 
-    public static GetPostMediaResponse fromNoMedia(GetPostDto post) {
+    public static GetPostMediaResponse fromNoMedia(PostDtoRedisTemplate post) {
         return GetPostMediaResponse.builder()
                 .userId(post.getUserId())
                 .postId(post.getPostId())
@@ -39,7 +39,7 @@ public class GetPostMediaResponse {
                 .build();
     }
 
-    public static GetPostMediaResponse fromExistMedia(GetPostDto post, List<GetPostMediaDto.MediaInfo> infoList) {
+    public static GetPostMediaResponse fromExistMedia(PostDtoRedisTemplate post, List<GetPostMediaDto.MediaInfo> infoList) {
         return GetPostMediaResponse.builder()
                 .userId(post.getUserId())
                 .postId(post.getPostId())

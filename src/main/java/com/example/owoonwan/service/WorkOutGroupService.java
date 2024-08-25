@@ -157,13 +157,11 @@ public class WorkOutGroupService {
     @GroupLock
     private JoinWorkOutGroupDto getGroupIdLockAndJoin(Long groupId,
                                                 WorkOutGroup group,String userId){
-        Optional<WorkOutGroupMember> existMember =
-                workOutGroupMemberRepository.findByGroupIdAndUserId(groupId, userId);
-        if(existMember.isPresent()){
+        if(workOutGroupMemberRepository.findByGroupIdAndUserId(groupId, userId).isPresent()){
             throw new WorkOutGroupException(ErrorCode.USER_ID_EXIST);
         }
         // status 를 확인할때, 상호배제 필요
-        if(group.getStatus().equals(GroupStatus.FULL)){
+        if(group.getStatus() == GroupStatus.FULL){
             throw new WorkOutGroupException(ErrorCode.GROUP_IS_FULL);
         }
         JoinWorkOutGroupDto result = new JoinWorkOutGroupDto();

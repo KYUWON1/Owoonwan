@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "게시글 조회 DTO")
-public class GetPostDto {
+public class PostDtoRedisTemplate {
 
     @Schema(description = "게시글 작성자 ID", example = "user123")
     private String userId;
@@ -26,8 +26,8 @@ public class GetPostDto {
     @Schema(description = "게시글 수정 일자", example = "2024-08-25T10:15:30")
     private Date updatedAt;
 
-    public static GetPostDto FromEntity(Post post) {
-        return GetPostDto.builder()
+    public static PostDtoRedisTemplate FromEntity(Post post) {
+        return PostDtoRedisTemplate.builder()
                 .userId(post.getUserId())
                 .postId(post.getPostId())
                 .content(post.getContent())

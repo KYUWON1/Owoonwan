@@ -1,6 +1,6 @@
 package com.example.owoonwan.config;
 
-import com.example.owoonwan.dto.dto.GetPostDto;
+import com.example.owoonwan.dto.dto.PostDtoRedisTemplate;
 import com.example.owoonwan.dto.dto.GetPostMediaDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.*;
-
-import java.time.Duration;
 
 @Configuration
 @RequiredArgsConstructor
@@ -51,9 +47,9 @@ public class RedisCacheConfig {
     }
 
     @Bean
-    public RedisTemplate<String, GetPostDto> postDtoRedisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, GetPostDto> template = new RedisTemplate<>();
-        configureTemplate(template, factory, new Jackson2JsonRedisSerializer<>(GetPostDto.class));
+    public RedisTemplate<String, PostDtoRedisTemplate> postDtoRedisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, PostDtoRedisTemplate> template = new RedisTemplate<>();
+        configureTemplate(template, factory, new Jackson2JsonRedisSerializer<>(PostDtoRedisTemplate.class));
         return template;
     }
 

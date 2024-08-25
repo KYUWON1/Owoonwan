@@ -75,7 +75,7 @@ public class PostController {
     public GetPostMediaResponse getPostDetail(
             @Parameter(description = "게시글 ID") @PathVariable Long postId
     ) {
-        GetPostDto post = postService.getPostDetail(postId);
+        PostDtoRedisTemplate post = postService.getPostDetail(postId);
         GetPostMediaDto medium = postMediaService.getPostMedium(post.getPostId());
 
         // 미디어 파일 없을시
@@ -91,10 +91,10 @@ public class PostController {
     public List<GetPostMediaResponse> getPostList(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        List<GetPostDto> posts = postService.getPosts(pageable);
+        List<PostDtoRedisTemplate> posts = postService.getPosts(pageable);
         List<GetPostMediaResponse> responseList = new ArrayList<>();
 
-        for(GetPostDto post : posts){
+        for(PostDtoRedisTemplate post : posts){
             GetPostMediaDto mediaInPost = postMediaService.getPostMedium(post.getPostId());
 
             GetPostMediaResponse response = new GetPostMediaResponse();

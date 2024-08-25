@@ -94,7 +94,7 @@ public class PostMediaService {
             for(PostMedia post : existingMedia){
                 s3Service.deleteFile(post.getUrl());
             }
-            postMediaRepository.deleteAll(existingMedia);
+            postMediaRepository.deleteByPostId(postId);
         }
 
         SavePostMediaDto result = saveFileListToDbAndS3(postId, files);

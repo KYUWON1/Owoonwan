@@ -2,7 +2,7 @@ package com.example.owoonwan.service;
 
 import com.example.owoonwan.domain.Post;
 import com.example.owoonwan.dto.dto.CreatePostDto;
-import com.example.owoonwan.dto.dto.GetPostDto;
+import com.example.owoonwan.dto.dto.PostDtoRedisTemplate;
 import com.example.owoonwan.exception.PostException;
 import com.example.owoonwan.repository.jpa.PostRepository;
 import com.example.owoonwan.type.ErrorCode;
@@ -39,7 +39,7 @@ class PostServiceTest {
     private PostRepository postRepository;
 
     @Mock
-    private RedisTemplate<String, GetPostDto> redisTemplate;
+    private RedisTemplate<String, PostDtoRedisTemplate> redisTemplate;
 
     @InjectMocks
     private PostService postService;
@@ -77,17 +77,17 @@ class PostServiceTest {
     void getPostDetailsFromCache() {
         // given
         Long postId = 1L;
-        GetPostDto cachedPostDto = GetPostDto.builder()
+        PostDtoRedisTemplate cachedPostDto = PostDtoRedisTemplate.builder()
                     .postId(postId)
                     .userId("testId")
                     .content("testContent")
                     .build();
-        ValueOperations<String, GetPostDto> valueOps = mock(ValueOperations.class);
+        ValueOperations<String, PostDtoRedisTemplate> valueOps = mock(ValueOperations.class);
         given(redisTemplate.opsForValue()).willReturn(valueOps);
         given(valueOps.get("postCache:" + postId)).willReturn(cachedPostDto);
 
         // when
-        GetPostDto result = postService.getPostDetail(postId);
+        PostDtoRedisTemplate result = postService.getPostDetail(postId);
 
         // then
         verify(redisTemplate).expire(eq("postCache:" + postId), any(Duration.class));
@@ -106,19 +106,19 @@ class PostServiceTest {
         post.setContent("testContent");
         post.setUpdatedAt(new Date());
 
-        ValueOperations<String, GetPostDto> valueOps = mock(ValueOperations.class);
+        ValueOperations<String, PostDtoRedisTemplate> valueOps = mock(ValueOperations.class);
         given(redisTemplate.opsForValue()).willReturn(valueOps);
         given(valueOps.get("postCache:" + postId)).willReturn(null);
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
-        ArgumentCaptor<GetPostDto> captor = ArgumentCaptor.forClass(GetPostDto.class);
+        ArgumentCaptor<PostDtoRedisTemplate> captor = ArgumentCaptor.forClass(PostDtoRedisTemplate.class);
 
         // when
-        GetPostDto result = postService.getPostDetail(postId);
+        PostDtoRedisTemplate result = postService.getPostDetail(postId);
 
         // then
         verify(valueOps).set(eq("postCache:" + postId), captor.capture(),
                 any(Duration.class));
-        GetPostDto capturedDto = captor.getValue();
+        PostDtoRedisTemplate capturedDto = captor.getValue();
         assertNotNull(capturedDto);
         verify(redisTemplate,never()).expire(anyString(),any(Duration.class));
         verify(postRepository, times(1)).findById(postId);
@@ -139,7 +139,7 @@ class PostServiceTest {
         post.setContent("testContent");
         post.setUpdatedAt(new Date());
 
-        ValueOperations<String, GetPostDto> valueOps = mock(ValueOperations.class);
+        ValueOperations<String, PostDtoRedisTemplate> valueOps = mock(ValueOperations.class);
         given(redisTemplate.opsForValue()).willReturn(valueOps);
         given(valueOps.get("postCache:" + postId)).willReturn(null);
         given(postRepository.findById(postId)).willReturn(Optional.empty());
@@ -173,7 +173,7 @@ class PostServiceTest {
         given(postRepository.findAll(pageable)).willReturn(postPage);
 
         //when
-        List<GetPostDto> result = postService.getPosts(pageable);
+        List<PostDtoRedisTemplate> result = postService.getPosts(pageable);
 
         //then
         assertFalse(result.isEmpty());
