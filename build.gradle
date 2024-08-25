@@ -54,7 +54,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// test security
 	testImplementation 'org.springframework.security:spring-security-test'
-	runtimeOnly 'com.h2database:h2'
+	//runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j' // -java는 에러발생
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

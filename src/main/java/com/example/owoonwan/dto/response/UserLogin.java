@@ -14,10 +14,10 @@ public class UserLogin {
     @Schema(name="UserLoginRequest",description = "사용자 로그인 요청 DTO")
     public static class Request {
 
-        @Schema(description = "사용자 ID", example = "john_doe123")
+        @Schema(description = "사용자 ID", example = "testId")
         private String userId;
 
-        @Schema(description = "비밀번호", example = "securepassword")
+        @Schema(description = "비밀번호", example = "test1234")
         private String password;
     }
 
@@ -27,13 +27,10 @@ public class UserLogin {
     @Schema(name="UserLoginResponse",description = "사용자 로그인 응답 DTO")
     public static class Response {
 
-        @Schema(description = "사용자 ID", example = "john_doe123")
-        private String userId;
+        @Schema(description = "로그인", example = "true")
+        private String success;
 
-        @Schema(description = "인증 토큰", example = "Bearer...")
+        @Schema(description = "메세지", example = "Authentication successful")
         private String token;
-
-        @Schema(description = "응답 설명", example = "로그인이 성공적으로 완료되었습니다.")
-        private String description;
     }
 }

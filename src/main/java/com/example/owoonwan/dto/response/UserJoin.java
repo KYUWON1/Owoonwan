@@ -19,8 +19,8 @@ public class UserJoin {
 
         @NotNull
         @Min(10)
-        @Schema(name="UserJoinResponse",description = "사용자 ID", example =
-                "john_doe123")
+        @Schema(description = "사용자 ID", example =
+                "testId")
         private String userId;
 
         @NotNull
@@ -43,7 +43,7 @@ public class UserJoin {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(description = "사용자 가입 응답 DTO")
+    @Schema(name="UserJoinResponse",description = "사용자 가입 응답 DTO")
     public static class Response {
 
         @Schema(description = "사용자 ID", example = "john_doe123")

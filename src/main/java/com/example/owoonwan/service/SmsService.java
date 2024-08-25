@@ -21,16 +21,16 @@ public class SmsService {
             @Value("${SMS_API_SECRET}") String apiSecret,
             @Value("${SMS_PHONE_NUMBER}") String senderNumber
     ) {
-        Dotenv dotenv = Dotenv.load();
-        if(apiKey == null){
-            apiKey = dotenv.get("SMS_API_KEY");
-        }
-        if(apiSecret == null){
-            apiSecret = dotenv.get("SMS_API_SECRET");
-        }
-        if(senderNumber == null){
-            senderNumber = dotenv.get("SMS_PHONE_NUMBER");
-        }
+//        Dotenv dotenv = Dotenv.load();
+//        if(apiKey == null){
+//            apiKey = dotenv.get("SMS_API_KEY");
+//        }
+//        if(apiSecret == null){
+//            apiSecret = dotenv.get("SMS_API_SECRET");
+//        }
+//        if(senderNumber == null){
+//            senderNumber = dotenv.get("SMS_PHONE_NUMBER");
+//        }
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
         this.senderNumber = senderNumber;
