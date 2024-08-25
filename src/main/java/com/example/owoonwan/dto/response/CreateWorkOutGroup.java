@@ -13,7 +13,7 @@ public class CreateWorkOutGroup {
 
     @Getter
     @Setter
-    @Schema(description = "운동 그룹 생성 요청 DTO")
+    @Schema(name="CreateWorkOutGroupRequest",description = "운동 그룹 생성 요청 DTO")
     public static class Request {
         @Schema(description = "최대 회원 수", example = "20")
         private Long maxMember;
@@ -28,7 +28,7 @@ public class CreateWorkOutGroup {
     @Getter
     @Setter
     @Builder
-    @Schema(description = "운동 그룹 생성 응답 DTO")
+    @Schema(name="CreateWorkOutGroupResponse",description = "운동 그룹 생성 응답 DTO")
     public static class Response {
         @Schema(description = "그룹 소유자 ID", example = "owner123")
         private String ownerId;

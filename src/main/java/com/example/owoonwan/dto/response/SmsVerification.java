@@ -11,7 +11,7 @@ public class SmsVerification {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @Schema(description = "SMS 인증 요청 DTO")
+    @Schema(name="SmsVerificationRequest",description = "SMS 인증 요청 DTO")
     public static class Request {
 
         @Schema(description = "인증 코드", example = "123456")
@@ -21,7 +21,7 @@ public class SmsVerification {
     @Getter
     @Setter
     @Builder
-    @Schema(description = "SMS 인증 응답 DTO")
+    @Schema(name="SmsVerificationResponse",description = "SMS 인증 응답 DTO")
     public static class Response {
 
         @Schema(description = "응답 설명", example = "인증 성공")

@@ -12,7 +12,8 @@ public class UpdateUserPassword {
     @Setter
     @AllArgsConstructor
     @Builder
-    @Schema(description = "사용자 비밀번호 업데이트 요청 DTO")
+    @Schema(name="UpdateUserPasswordRequest",description = "사용자 비밀번호 업데이트 요청 " +
+            "DTO")
     public static class Request {
 
         @Schema(description = "기존 비밀번호", example = "oldPassword123")
@@ -29,7 +30,8 @@ public class UpdateUserPassword {
     @Setter
     @AllArgsConstructor
     @Builder
-    @Schema(description = "사용자 비밀번호 업데이트 응답 DTO")
+    @Schema(name="UpdateUserPasswordResponse",description = "사용자 비밀번호 업데이트 응답" +
+            " DTO")
     public static class Response {
 
         @Schema(description = "사용자 ID", example = "user123")

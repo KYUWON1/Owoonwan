@@ -11,7 +11,7 @@ public class UserLogin {
     @Getter
     @Setter
     @AllArgsConstructor
-    @Schema(description = "사용자 로그인 요청 DTO")
+    @Schema(name="UserLoginRequest",description = "사용자 로그인 요청 DTO")
     public static class Request {
 
         @Schema(description = "사용자 ID", example = "john_doe123")
@@ -24,7 +24,7 @@ public class UserLogin {
     @Getter
     @Setter
     @Builder
-    @Schema(description = "사용자 로그인 응답 DTO")
+    @Schema(name="UserLoginResponse",description = "사용자 로그인 응답 DTO")
     public static class Response {
 
         @Schema(description = "사용자 ID", example = "john_doe123")

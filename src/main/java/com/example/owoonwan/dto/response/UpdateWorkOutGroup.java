@@ -10,7 +10,7 @@ public class UpdateWorkOutGroup {
 
     @Getter
     @Setter
-    @Schema(description = "운동 그룹 업데이트 요청 DTO")
+    @Schema(name="UpdateWorkOutGroupRequest",description = "운동 그룹 업데이트 요청 DTO")
     public static class Request {
 
         @Schema(description = "운동 그룹 제목", example = "Morning Workout Group")
@@ -26,7 +26,7 @@ public class UpdateWorkOutGroup {
     @Getter
     @Setter
     @Builder
-    @Schema(description = "운동 그룹 업데이트 응답 DTO")
+    @Schema(name="UpdateWorkOutGroupResponse",description = "운동 그룹 업데이트 응답 DTO")
     public static class Response {
 
         @Schema(description = "운동 그룹 ID", example = "1")

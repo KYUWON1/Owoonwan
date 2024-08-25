@@ -8,7 +8,7 @@ public class CreateComment {
 
     @Getter
     @Setter
-    @Schema(description = "댓글 생성 요청 DTO")
+    @Schema(name="CreateCommentRequest",description = "댓글 생성 요청 DTO")
     public static class Request {
         @Schema(description = "댓글 내용", example = "This is a comment.")
         private String content;
@@ -25,7 +25,7 @@ public class CreateComment {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(description = "댓글 생성 응답 DTO")
+    @Schema(name="CreateCommentResponse",description = "댓글 생성 응답 DTO")
     public static class Response {
         @Schema(description = "사용자 ID", example = "user123")
         private String userId;

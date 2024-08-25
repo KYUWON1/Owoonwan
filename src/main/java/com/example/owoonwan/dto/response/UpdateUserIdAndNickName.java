@@ -9,7 +9,8 @@ public class UpdateUserIdAndNickName {
     @Setter
     @AllArgsConstructor
     @Builder
-    @Schema(description = "사용자 ID 및 닉네임 업데이트 요청 DTO")
+    @Schema(name="UpdateUserIdAndNickNameRequest",description = "사용자 ID 및 닉네임" +
+            " 업데이트 요청 DTO")
     public static class Request {
 
         @Schema(description = "사용자 ID", example = "user123")
@@ -24,7 +25,8 @@ public class UpdateUserIdAndNickName {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(description = "사용자 ID 및 닉네임 업데이트 응답 DTO")
+    @Schema(name="UpdateUserIdAndNickNameResponse",description = "사용자 ID 및 " +
+            "닉네임 업데이트 응답 DTO")
     public static class Response {
 
         @Schema(description = "사용자 ID", example = "user123")

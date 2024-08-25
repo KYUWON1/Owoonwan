@@ -14,12 +14,13 @@ public class UserJoin {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(description = "사용자 가입 요청 DTO")
+    @Schema(name="UserJoinRequest",description = "사용자 가입 요청 DTO")
     public static class Request {
 
         @NotNull
         @Min(10)
-        @Schema(description = "사용자 ID", example = "john_doe123")
+        @Schema(name="UserJoinResponse",description = "사용자 ID", example =
+                "john_doe123")
         private String userId;
 
         @NotNull
